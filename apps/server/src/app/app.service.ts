@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {Task, TaskSchema, TaskDocument} from './models/task'
-import { CreateTaskDto, TaskDto, TaskListDto } from './models/dto';
+import { CreateTaskDto, TaskDto, TaskListDto, UpdateTaskDto } from './models/dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -54,4 +54,27 @@ export class AppService {
       });
     });
   }
+
+
+  async deleteOne(id: string):Promise<TaskDto>{
+    const task = await this.model.findByIdAndDelete(id).exec()
+    console.log(task)
+    return null
+  }
+
+
+// Im AppService
+async update(id: string, updatedTaskDto: UpdateTaskDto): Promise<UpdateTaskDto> {
+  const updatedTask = await this.model.findByIdAndUpdate(id, updatedTaskDto, { new: true }).exec();
+  // Konvertiere den Mongoose-Dokument in ein DTO
+  const updatedTaskDtoResult: UpdateTaskDto = {
+    description: updatedTask.description,
+    creationDate: updatedTask.creationDate,
+    completionDate: updatedTask.completionDate,
+    priority: updatedTask.priority,
+    completed: updatedTask.completed,
+  };
+
+  return updatedTaskDtoResult;
+}
 }

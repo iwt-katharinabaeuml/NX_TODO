@@ -29,21 +29,21 @@ async create(@Body() newTask:CreateTaskDto): Promise<TaskDto>{
 return this.appService.create(newTask);
 }
 
-// @Delete(':id')
-// @ApiResponse({ status: 200, type: TaskDto})
-// async delete(@Param('id') id: string):Promise<TaskDto> {
-//   return this.appService.delete(id)
-// }
-
-@Put(':id')
-update(@Param('id') id: string, @Body() updateTask: UpdateTaskDto): TaskDto{
-  return 
+@Delete(':id')
+@ApiResponse({ status: 200, type: TaskDto})
+async deleteOne(@Param('id') id: string):Promise<TaskDto> {
+  return this.appService.deleteOne(id)
 }
 
+@Put(':id')
+@ApiResponse({ status: 200, type: UpdateTaskDto })
+async update(@Param('id') id: string, @Body() updatedTask: UpdateTaskDto): Promise<UpdateTaskDto> {
+  return this.appService.update(id, updatedTask);
+}
 
 @Patch(':id')
 updatePartial(@Param('id') id: string, @Body() updateTask: UpdateTaskDto): TaskDto{
-  return 
+      return 
 }
 
 
