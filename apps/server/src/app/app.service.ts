@@ -9,6 +9,7 @@ export class AppService {
   constructor(@InjectModel(Task.name) private model: Model<Task>) {}
 
   async getAll(): Promise<TaskDto[]> {
+    console.log("ALLES")
     const tasks = await this.model.find().exec();
 
     return tasks.map((task) => { return {
@@ -55,19 +56,16 @@ export class AppService {
     });
   }
 
-
-  async deleteOne(id: string):Promise<TaskDto>{
+async deleteOne(id: string):Promise<TaskDto>{
     const task = await this.model.findByIdAndDelete(id).exec()
     console.log(task)
     return null
   }
 
-
-// Im AppService
-async update(id: string, updatedTaskDto: UpdateTaskDto): Promise<UpdateTaskDto> {
-  const updatedTask = await this.model.findByIdAndUpdate(id, updatedTaskDto, { new: true }).exec();
-  // Konvertiere den Mongoose-Dokument in ein DTO
-  const updatedTaskDtoResult: UpdateTaskDto = {
+async update(id: string, updatedTaskDto: UpdateTaskDto): Promise<TaskDto> {
+  const updatedTask = await this.model.findOneAndReplace({_id:id}, updatedTaskDto, { new: true, useFindAndModify: false, }).exec();
+  const updatedTaskDtoResult:TaskDto = {
+    id: id, 
     description: updatedTask.description,
     creationDate: updatedTask.creationDate,
     completionDate: updatedTask.completionDate,
@@ -77,4 +75,27 @@ async update(id: string, updatedTaskDto: UpdateTaskDto): Promise<UpdateTaskDto> 
 
   return updatedTaskDtoResult;
 }
-}
+
+async updatePartial(id: string, updatedTasks: UpdateTaskDto): Promise<TaskDto> {
+  const existingTask = await this.model.findById(id);
+  const newTask:TaskDto = {
+    id:existingTask.id,
+    description: updatedTasks.description,
+    creationDate: updatedTasks.creationDate ? new Date(updatedTasks.creationDate) : undefined,
+    completionDate: updatedTasks.completionDate ? new Date(updatedTasks.completionDate) : undefined,
+    priority: updatedTasks.priority,
+    completed: updatedTasks.completed
+  };
+  const updatedTask = await this.model.findByIdAndUpdate(id, newTask, { new: true});
+return updatedTask as TaskDto
+//{
+//     id: updatedTask['_id'].toString(),
+//     description: updatedTask.description,
+//     creationDate: updatedTask.creationDate,
+//     completionDate: updatedTask.completionDate,
+//     priority: updatedTask.priority,
+//     completed: updatedTask.completed
+//   } as TaskDto
+// }
+
+}}
