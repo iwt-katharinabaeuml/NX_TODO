@@ -18,7 +18,7 @@ import {
   TaskDto,
   TaskListDto,
   UpdatePartialTaskDto,
-  UpdateTaskDto
+  UpdateTaskDto,
 } from './models/dto';
 
 import { Task } from './models/task';
@@ -35,51 +35,75 @@ export class AppController {
 
   @Get()
   @ApiResponse({ status: 200, isArray: true, type: TaskDto })
-  @ApiResponse({ status: 404, description: 'No Tasks found' })
-  @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiResponse({ status: 404, description: 'No Tasks found', type: ErrorDto })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+    type: ErrorDto,
+  })
   async getAll(): Promise<TaskListDto> {
     return this.appService.getAll();
   }
 
   @Get(':id')
   @ApiOkResponse({ type: TaskDto })
-  @ApiNotFoundResponse({})
-  //@ApiResponse({ status: 404, description: "No Task with this ID found"})
-  @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiResponse({
+    status: 404,
+    description: 'No Task with this ID found',
+    type: ErrorDto,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+    type: ErrorDto,
+  })
   async getOne(@Param('id') id: string): Promise<TaskDto> {
     return this.appService.getOne(id);
   }
 
   @Post('')
   @ApiCreatedResponse({ type: TaskDto }) //201
-
-
-  //@ApiResponse({ status: 400,  isArray: true, })
-  
-
-  @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiResponse({ status: 400, description: 'Bad Request', type: ErrorDto })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+    type: ErrorDto,
+  })
   async create(@Body() newTask: CreateTaskDto): Promise<TaskDto> {
     return this.appService.create(newTask);
   }
 
-
-
   @Delete(':id')
   @ApiResponse({ status: 204, description: 'Task deleted successfully' })
-  //@ApiResponse({ status: 400, description: "Bad Request"})
-  //@ApiResponse({ status: 404, description: "No Task with with ID found"})
-  @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiResponse({ status: 400, description: 'Bad Request', type: ErrorDto })
+  @ApiResponse({
+    status: 404,
+    description: 'No Task with this ID found',
+    type: ErrorDto,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+    type: ErrorDto,
+  })
   async deleteOne(@Param('id') id: string): Promise<TaskDto> {
     return this.appService.deleteOne(id);
   }
 
-
-
+  // PUT as example for the other Requests
   @Put(':id')
   @ApiResponse({ status: 200, type: TaskDto })
-  @ApiResponse({ status: 400, description: "Bad Request", type: ErrorDto})
-  @ApiResponse({ status: 404, description: 'No Task with this ID found', type: ErrorDto })
-  @ApiResponse({ status: 500, description: 'internal server error', type: ErrorDto })
+  @ApiResponse({ status: 400, description: 'Bad Request', type: ErrorDto })
+  @ApiResponse({
+    status: 404,
+    description: 'No Task with this ID found',
+    type: ErrorDto,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+    type: ErrorDto,
+  })
   async update(
     @Param('id') id: string,
     @Body() updatedTask: UpdateTaskDto
@@ -89,24 +113,30 @@ export class AppController {
 
   @Patch(':id')
   @ApiResponse({ status: 200, type: TaskDto })
-  //@ApiResponse({ status: 400, description: "Bad Request"})
-  @ApiResponse({ status: 404, description: 'No Task with with this ID found' })
+  @ApiResponse({ status: 400, description: 'Bad Request', type: ErrorDto })
   @ApiResponse({
-    status: 409,
-    description: 'The task could not be updated due to a conflict.',
+    status: 404,
+    description: 'No Task with with this ID found',
+    type: ErrorDto,
   })
-  @ApiResponse({ status: 500, description: 'internal server error' })
+  // @ApiResponse({
+  //   status: 409,
+  //   description: 'The task could not be updated due to a conflict.',
+  //   type: ErrorDto,
+  // })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+    type: ErrorDto,
+  })
   async updatePartial(
     @Param('id') id: string,
     @Body() tasksToUpdate: UpdatePartialTaskDto
-  ): Promise<TaskDto> {
-    return this.appService.updatePartial(id, tasksToUpdate);
+  ) {
+    return await this.appService.updatePartial(id, tasksToUpdate);
   }
 }
 
-// ein response model, ein request model
-
-// ERROR-Model für 404, ggf. Array an Messages
 // https://swagger.io/tools/swagger-codegen/
 
 //http://localhost:3300/api-docs => SwaggerUI
