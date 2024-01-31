@@ -72,10 +72,11 @@ export class AppService {
       const updateQuery = this.updateDtoMapper(task);
 
       taskDocument = await this.model
-        .findOneAndReplace({_id: id}, updateQuery, {
+        .findOneAndReplace({ _id: id }, updateQuery, {
           new: true,
           useFindAndModify: false,
-        }).exec();
+        })
+        .exec();
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException();
@@ -102,20 +103,20 @@ export class AppService {
           new: true,
         })
         .exec();
-      } catch (error) {
-        console.error(error);
-        throw new InternalServerErrorException();
-      }
-  
-      if (!taskDocument) {
-        throw new NotFoundException('Task not found');
-      }
-  
-      return this.taskDocumentMapper(taskDocument);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException();
+    }
+
+    if (!taskDocument) {
+      throw new NotFoundException('Task not found');
+    }
+
+    return this.taskDocumentMapper(taskDocument);
   }
 
   private createDtoMapper(dto: CreateTaskDto) {
-    try { 
+    try {
       return {
         description: dto.description,
         creationDate: new Date(dto.creationDate),

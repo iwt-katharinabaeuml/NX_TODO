@@ -24,7 +24,6 @@ import {
 import { Task } from './models/task';
 import {
   ApiCreatedResponse,
-  ApiNotFoundResponse,
   ApiOkResponse,
   ApiResponse,
 } from '@nestjs/swagger';
