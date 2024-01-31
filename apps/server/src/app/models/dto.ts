@@ -10,13 +10,12 @@ import {
   IsString,
 } from 'class-validator';
 
-enum Priority {
-  'high',
-  'medium',
-  'low',
-  'none',
-}
-
+export enum Priority {
+    none = 'none',
+    low = 'low',
+    medium = 'medium',
+    high = 'high',
+  }
 export class ErrorDto {
   @ApiProperty()
   @IsNotEmpty()
@@ -121,9 +120,11 @@ export class TaskDto {
   completionDate: Date;
 
   @ApiProperty()
-  priority: string;
+  @IsEnum(Priority)
+  priority: Priority
 
   @ApiProperty()
+  @IsEnum(Priority)
   completed: boolean;
 }
 

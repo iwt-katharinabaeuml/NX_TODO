@@ -6,6 +6,7 @@ import {
 import { Task, TaskDocument } from './models/task';
 import {
   CreateTaskDto,
+  Priority,
   TaskDto,
   TaskListDto,
   UpdatePartialTaskDto,
@@ -157,7 +158,7 @@ export class AppService {
         description: document.description,
         creationDate: document.creationDate,
         completionDate: document.completionDate,
-        priority: document.priority,
+        priority: document.priority as Priority,
         completed: document.completed,
       } as TaskDto;
     } catch (error) {

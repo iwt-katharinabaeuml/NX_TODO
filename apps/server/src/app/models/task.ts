@@ -1,8 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { isEnum } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
 
 export type TaskDocument = HydratedDocument<Task>;
-
+export enum Priority {
+  'high',
+  'medium',
+  'low',
+  'none',
+}
 @Schema()
 export class Task {
   @Prop({ required: true })
@@ -14,8 +20,8 @@ export class Task {
   @Prop()
   completionDate: Date;
 
-  @Prop({ enum: ['high', 'medium', 'low', 'none'], default: 'none' })
-  priority: string;
+  @Prop()
+  priority: Priority
 
   @Prop({ default: false })
   completed: boolean;
