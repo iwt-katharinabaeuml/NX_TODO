@@ -2,9 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { ErrorDto, TaskListDto, TaskDto, CreateTaskDto, Priority } from './models/dto';
+import {
+  ErrorDto,
+  TaskListDto,
+  TaskDto,
+  CreateTaskDto,
+  Priority,
+} from './models/dto';
 import { Task, TaskDocument } from './models/task';
-
 
 class MockModel<T> {
   constructor(private data: T[] = []) {}
@@ -151,7 +156,6 @@ describe('Testing AppController', () => {
 
   describe('create', () => {
     test('should call appService.create and return the created task', async () => {
-      // Mocken Sie die create-Methode von appService
       jest.spyOn(appService, 'create').mockImplementation(async (newTask) => {
         const createdTask: TaskDto = {
           id: '1',
@@ -161,38 +165,31 @@ describe('Testing AppController', () => {
           priority: newTask.priority as Priority,
           completed: newTask.completed,
         };
-  
+
         return createdTask;
       });
-  
-      // Konfigurieren Sie Ihre Testdaten
+
       const newTask: CreateTaskDto = {
         description: 'New Task',
         creationDate: new Date('2025-02-02'),
         completed: true,
-        priority: Priority.high, // kleingeschriebener Enum-Wert
+        priority: Priority.high,
       };
-  
-      // Führen Sie die create-Methode aus
       const result = await appController.create(newTask);
-  
-      // Überprüfen Sie, ob die Methode mit den erwarteten Argumenten aufgerufen wurde
+      
       expect(appService.create).toHaveBeenCalledWith(newTask);
-  
-      // Erwarten Sie, dass das Ergebnis mit der erstellten Aufgabe übereinstimmt
+
       expect(result).toEqual({
         id: '1',
         description: 'New Task',
         creationDate: newTask.creationDate,
         completionDate: null,
-        priority: Priority.high, // kleingeschriebener Enum-Wert
+        priority: Priority.high,
         completed: true,
       });
     });
   });
-  
 });
-  
 
 // describe('AppController', () => {
 //   let app: TestingModule;
