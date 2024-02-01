@@ -58,9 +58,12 @@ export class AppService {
 
   async deleteOne(id: string): Promise<TaskDto> {
     try {
-      const task = await this.model.findByIdAndDelete(id).exec();
-      console.log(task);
-      return null;
+      return new Promise<TaskDto>(async (resolve, reject) => {
+        await this.model
+          .findByIdAndDelete(id)
+          .then((t) => resolve(null))
+          .catch((e) => reject(new NotFoundException('Task not found')));
+      });
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException();

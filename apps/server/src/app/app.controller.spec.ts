@@ -8,8 +8,13 @@ import {
   TaskDto,
   CreateTaskDto,
   Priority,
+  UpdateTaskDto,
 } from './models/dto';
 import { Task, TaskDocument } from './models/task';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 class MockModel<T> {
   constructor(private data: T[] = []) {}
@@ -19,7 +24,6 @@ class MockModel<T> {
       exec: async () => this.data,
     };
   }
-
   //evtl weitere Methoden ??
 }
 
@@ -102,7 +106,7 @@ describe('Testing AppController', () => {
     ]);
   });
 
-  describe('getOne', () => {
+  describe('testing GET by ID', () => {
     test('should call appService.getOne and return a task', async () => {
       const taskId = '1';
       const task: TaskDto = {
@@ -154,7 +158,7 @@ describe('Testing AppController', () => {
     });
   });
 
-  describe('create', () => {
+  describe('testing POST', () => {
     test('should call appService.create and return the created task', async () => {
       jest.spyOn(appService, 'create').mockImplementation(async (newTask) => {
         const createdTask: TaskDto = {
@@ -176,41 +180,157 @@ describe('Testing AppController', () => {
         priority: Priority.high,
       };
       const result = await appController.create(newTask);
-      
-      expect(appService.create).toHaveBeenCalledWith(newTask);
+
+      expect(appService.create).toHaveBeenCalledWith(newTask); // überflüssig?
 
       expect(result).toEqual({
         id: '1',
         description: 'New Task',
-        creationDate: newTask.creationDate,
+        creationDate: new Date('2025-02-02'),
         completionDate: null,
         priority: Priority.high,
         completed: true,
-      });
+      } as CreateTaskDto);
     });
   });
+  describe('testing DELETE', () => {
+    test('should call appService.deleteOne', async () => {
+      jest
+        .spyOn(appService, 'deleteOne')
+        .mockImplementation(async (id: string) => {
+          if (id === 't1h2i3s4i5s6a7n8i9d1lalala') {
+            return null;
+          }
+        });
+      const result = await appController.deleteOne(
+        't1h2i3s4i5s6a7n8i9d1lalala'
+      );
+      expect(appService.deleteOne).toHaveBeenCalledWith(
+        't1h2i3s4i5s6a7n8i9d1lalala'
+      );
+      expect(result).toBeNull();
+    });
+
+    test('should call appService.deleteOne not found', async () => {
+      jest
+        .spyOn(appService, 'deleteOne')
+        .mockImplementationOnce((id: any) =>
+          Promise.reject(new NotFoundException('Task not found'))
+        );
+      try {
+        await appController.deleteOne(null);
+      } catch (e) {
+        expect(e.response).toEqual({
+          error: 'Not Found',
+          message: 'Task not found',
+          statusCode: 404,
+        });
+      }
+      expect(appService.deleteOne).toHaveBeenCalledWith(null);
+    });
+    test('should call appService.deleteOne null', async () => {
+      jest
+        .spyOn(appService, 'deleteOne')
+        .mockImplementationOnce((id: any) =>
+          Promise.reject(new InternalServerErrorException())
+        );
+      try {
+        await appController.deleteOne(null);
+      } catch (e) {
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      }
+      expect(appService.deleteOne).toHaveBeenCalledWith(null);
+    });
+  });
+
+  describe('testing PUT', () => {
+    test('should call appService.update', async () => {
+      jest
+        .spyOn(appService, 'update')
+        .mockImplementation(
+          async (id, newTaskafterUpdate): Promise<TaskDto> => {
+            const createdTask: TaskDto = {
+              id: id,
+              description: newTaskafterUpdate.description,
+              creationDate: newTaskafterUpdate.creationDate,
+              completionDate: null,
+              priority: newTaskafterUpdate.priority as Priority,
+              completed: newTaskafterUpdate.completed,
+            };
+            return createdTask;
+          }
+        );
+      const newTask = {
+        description: 'Patched Task',
+        creationDate: new Date('2025-02-02'),
+        completionDate: null,
+        priority: Priority.high,
+        completed: true,
+      };
+      const result = await appController.update('1', newTask);
+      expect(appService.update).toHaveBeenCalledWith('1', newTask);
+
+      expect(result).toEqual({
+        id: '1',
+        description: 'Patched Task',
+        creationDate: new Date('2025-02-02'),
+        completionDate: null,
+        priority: 'high',
+        completed: true,
+      });
+    });
+
+    test('should call appService.update id = null ', async () => {
+      jest
+        .spyOn(appService, 'update')
+        .mockImplementation(
+          async (id:any, newTaskafterUpdate:any): Promise<TaskDto> =>
+            Promise.reject(new InternalServerErrorException())
+        );
+      const createdTask = {
+        description: 'description',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: 'high' as Priority,
+        completed: true,
+      };
+      try {
+        await appController.update(null, createdTask);
+      } catch (e) {
+        expect(e.response).toEqual({
+          message:'Internal Server Error',
+          statusCode: 500,
+        } as ErrorDto);
+      }
+      expect(appService.update).toHaveBeenCalledWith(null, createdTask);
+    });
+    test('should call appService.update bad Request ', async () => {
+      jest
+        .spyOn(appService, 'update')
+        .mockImplementation(
+          async (id:any, newTaskafterUpdate:any): Promise<TaskDto> =>
+            Promise.reject(new InternalServerErrorException())
+        );
+      const createdTask = {
+        description: 'description',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: 'high' as Priority,
+        completed: true,
+      };
+      try {
+        await appController.update(null, createdTask);
+      } catch (e) {
+        expect(e.response).toEqual({
+          message:'Internal Server Error',
+          statusCode: 500,
+        } as ErrorDto);
+      }
+      expect(appService.update).toHaveBeenCalledWith(null, createdTask);
+    });
+  
+  });
 });
-
-// describe('AppController', () => {
-//   let app: TestingModule;
-
-//   beforeAll(async () => {
-//     app = await Test.createTestingModule({
-//       controllers: [AppController],
-//       providers: [AppService],
-//     }).compile();
-//   });
-
-//   describe('getData', () => {
-//     test('should return "Hello API"', () => {
-//       const appController = app.get<AppController>(AppController);
-//       expect(appController.getData()).toEqual({ message: 'Hello API' });
-//     });
-//   });
-//   describe('getAll', ()=> {
-//     test ('should return correct Data-Array', () => {
-//       const appController = app.get<AppController>(AppController);
-//       expect (appController.getAll()).toEqual({})
-//     })
-//   })
-// })

@@ -74,7 +74,6 @@ export class AppController {
 
   @Delete(':id')
   @ApiResponse({ status: 204, description: 'Task deleted successfully' })
-  @ApiResponse({ status: 400, description: 'Bad Request', type: ErrorDto })
   @ApiResponse({
     status: 404,
     description: 'No Task with this ID found',

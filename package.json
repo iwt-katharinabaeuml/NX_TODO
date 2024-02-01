@@ -2,7 +2,9 @@
   "name": "@full-stack-todo/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "test": "nx test"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~17.0.0",
