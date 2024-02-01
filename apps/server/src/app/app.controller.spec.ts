@@ -9,6 +9,7 @@ import {
   CreateTaskDto,
   Priority,
   UpdateTaskDto,
+  UpdatePartialTaskDto,
 } from './models/dto';
 import { Task, TaskDocument } from './models/task';
 import {
@@ -248,7 +249,7 @@ describe('Testing AppController', () => {
   });
 
   describe('testing PUT', () => {
-    test('should call appService.update', async () => {
+    test('should call appService.update with correct data and return corret data', async () => {
       jest
         .spyOn(appService, 'update')
         .mockImplementation(
@@ -288,7 +289,7 @@ describe('Testing AppController', () => {
       jest
         .spyOn(appService, 'update')
         .mockImplementation(
-          async (id:any, newTaskafterUpdate:any): Promise<TaskDto> =>
+          async (id: any, newTaskafterUpdate: any): Promise<TaskDto> =>
             Promise.reject(new InternalServerErrorException())
         );
       const createdTask = {
@@ -302,43 +303,129 @@ describe('Testing AppController', () => {
         await appController.update(null, createdTask);
       } catch (e) {
         expect(e.response).toEqual({
-          message:'Internal Server Error',
+          message: 'Internal Server Error',
           statusCode: 500,
         } as ErrorDto);
       }
       expect(appService.update).toHaveBeenCalledWith(null, createdTask);
     });
-    test('should call appService.update bad request ', async () => {
+    test('should call appService.update with missing description ', async () => {
       jest
         .spyOn(appService, 'update')
         .mockImplementation(
           async (id: any, newTaskafterUpdate: any): Promise<TaskDto> => {
-            if (id =='2') {
-              return Promise.reject(new BadRequestException);
+            if (id && !newTaskafterUpdate.description) {
+              return Promise.reject(new BadRequestException());
             }
-            return Promise.resolve(null)
+            return Promise.resolve(null);
           }
         );
-    
+
       const createdTask = {
         creationDate: new Date(),
         completionDate: null,
         priority: 'high' as Priority,
         completed: true,
+        // 'description' fehlt hier bewusst
       };
-    
+
       try {
-        await appController.update('2', createdTask as any);
+        await appController.update(
+          '65b7908ef6f302b2ee9e5f89',
+          createdTask as any
+        );
       } catch (e) {
         expect(e.response).toEqual({
-          message: 'Internal Server Error',
-          statusCode: 500,
+          message: 'Bad Request',
+          statusCode: 400,
         } as ErrorDto);
       }
-    
-      expect(appService.update).toHaveBeenCalledWith('2', createdTask);
+
+      expect(appService.update).toHaveBeenCalledWith(
+        '65b7908ef6f302b2ee9e5f89',
+        createdTask
+      );
     });
-    
-  
+    test('should call appService.update with incorrect id but correct id format ', async () => {
+      jest
+        .spyOn(appService, 'update')
+        .mockImplementation(
+          async (id: any, newTaskafterUpdate: any): Promise<TaskDto> => {
+            if (id === '65b7908ef6f302b2ee9e5f89') {
+              return Promise.reject(new NotFoundException('Task not found'));
+            }
+            return Promise.resolve(null);
+          }
+        );
+
+      const createdTask = {
+        description: 'some test description',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: 'high' as Priority,
+        completed: true,
+      };
+
+      try {
+        await appController.update(
+          '65b7908ef6f302b2ee9e5f89',
+          createdTask as any
+        );
+      } catch (e) {
+        expect(e.response).toEqual({
+          message: 'Task not found',
+          error: 'Not Found',
+          statusCode: 404,
+        } as ErrorDto);
+      }
+
+      expect(appService.update).toHaveBeenCalledWith(
+        '65b7908ef6f302b2ee9e5f89',
+        createdTask
+      );
+    });
+  });
+
+  describe('testing PATCH', () => {
+    test('should call appService.updatePartial with correct data and return correct data', async () => {
+      jest
+        .spyOn(appService, 'updatePartial')
+        .mockImplementation(async (id, tasksToUpdate) => {
+          const beforeTask: TaskDto = {
+            id: '65b7908ef6f302b2ee9effff',
+            description: 'some description',
+            creationDate: new Date('2025/02/02'),
+            completionDate: new Date('2025/02/02'),
+            priority: 'high' as Priority,
+            completed: true,
+          };
+
+          return beforeTask;
+        });
+
+      const result = await appController.updatePartial(
+        '65b7908ef6f302b2ee9effff',
+        { description: 'some new description' } as UpdatePartialTaskDto
+      );
+      expect(appService.updatePartial).toHaveBeenCalledWith(
+        '65b7908ef6f302b2ee9effff',
+        { description: 'some new description' } as UpdatePartialTaskDto
+      );
+      expect(result).toEqual({
+        id: '65b7908ef6f302b2ee9effff',
+        description: 'some description',
+        creationDate: new Date('2025/02/02'),
+        completionDate: new Date('2025/02/02'),
+        priority: 'high',
+        completed: true,
+      } as UpdatePartialTaskDto);
+    });
+    test('should call appService.updatePartial with incorrect id format', async () => {
+      jest
+        .spyOn(appService, 'updatePartial')
+        .mockImplementation(async (id, tasksToUpdate) =>
+          Promise.reject(new InternalServerErrorException())
+        );
+    });
   });
 });

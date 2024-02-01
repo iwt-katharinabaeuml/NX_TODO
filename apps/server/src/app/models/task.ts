@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { isEnum } from 'class-validator';
+import { IsEnum } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
 
 export type TaskDocument = HydratedDocument<Task>;
@@ -20,7 +20,8 @@ export class Task {
   @Prop()
   completionDate: Date;
 
-  @Prop()
+  @Prop({ type: String, enum: Object.values(Priority) })
+  @IsEnum(Priority, { message: 'Invalid priority' })
   priority: Priority
 
   @Prop({ default: false })

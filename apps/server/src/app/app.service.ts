@@ -87,7 +87,7 @@ export class AppService {
     }
 
     if (!taskDocument) {
-      throw new NotFoundException('Task not found');
+      throw new NotFoundException('Task not found'); // das geschieht ja gar nicht
     }
 
     return this.taskDocumentMapper(taskDocument);
