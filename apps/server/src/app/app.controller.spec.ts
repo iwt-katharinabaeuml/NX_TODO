@@ -12,6 +12,7 @@ import {
 } from './models/dto';
 import { Task, TaskDocument } from './models/task';
 import {
+  BadRequestException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -307,30 +308,37 @@ describe('Testing AppController', () => {
       }
       expect(appService.update).toHaveBeenCalledWith(null, createdTask);
     });
-    test('should call appService.update bad Request ', async () => {
+    test('should call appService.update bad request ', async () => {
       jest
         .spyOn(appService, 'update')
         .mockImplementation(
-          async (id:any, newTaskafterUpdate:any): Promise<TaskDto> =>
-            Promise.reject(new InternalServerErrorException())
+          async (id: any, newTaskafterUpdate: any): Promise<TaskDto> => {
+            if (id =='2') {
+              return Promise.reject(new BadRequestException);
+            }
+            return Promise.resolve(null)
+          }
         );
+    
       const createdTask = {
-        description: 'description',
         creationDate: new Date(),
         completionDate: null,
         priority: 'high' as Priority,
         completed: true,
       };
+    
       try {
-        await appController.update(null, createdTask);
+        await appController.update('2', createdTask as any);
       } catch (e) {
         expect(e.response).toEqual({
-          message:'Internal Server Error',
+          message: 'Internal Server Error',
           statusCode: 500,
         } as ErrorDto);
       }
-      expect(appService.update).toHaveBeenCalledWith(null, createdTask);
+    
+      expect(appService.update).toHaveBeenCalledWith('2', createdTask);
     });
+    
   
   });
 });
