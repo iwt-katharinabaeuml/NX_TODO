@@ -1,49 +1,103 @@
-// import { Test } from '@nestjs/testing';
+import { getModelToken } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppService } from './app.service';
+import { Priority, Task } from './models/task';
+import { Model, Types } from 'mongoose';
+import { TaskDto, TaskListDto } from './models/dto';
 
-// import { AppService } from './app.service';
+describe('AppService', () => {
+  let service: AppService;
+  let TaskModelMock: Model<Task>;
 
-// describe('AppService', () => {
-//   let service: AppService;
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AppService,
+        {
+          provide: getModelToken('Task'),
+          useValue: {
+            find: jest.fn(),
+            exec: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
 
-//   beforeAll(async () => {
-//     const app = await Test.createTestingModule({
-//       providers: [AppService],
-//     }).compile();
+    service = module.get<AppService>(AppService);
+    TaskModelMock = module.get<Model<Task>>(getModelToken('Task'));
+  });
 
-//     service = app.get<AppService>(AppService);
-//   });
+  describe('getAll', () => {
+    it('should return data in the correct format', async () => {
+      const id1 = new Types.ObjectId();
 
-//   describe('getData', () => {
-//     it('should return "Hello API"', () => {
-//       expect(service.getData()).toEqual({ message: 'Hello API' });
-//     });
-//   });
-// });
+      const id2 = new Types.ObjectId();
+      // Arrange
+      const mockedTasksDataBaseForReturning: any = [
+        {
+          _id: id1, // Mock a valid ObjectId
+          description: 'Task 1',
+          creationDate: new Date(),
+          completionDate: null,
+          priority: Priority.high,
+          completed: false,
+        },
+        {
+          _id: id2, // Mock another valid ObjectId
+          description: 'Task 2',
+          creationDate: new Date(),
+          completionDate: null,
+          priority: Priority.high,
+          completed: true,
+        },
+      ];
 
-// import { Test } from '@nestjs/testing';
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
+      const expected = [
+        {
+          id: id1.toString(), // Mock a valid ObjectId
+          description: 'Task 1',
+          creationDate: new Date(),
+          completionDate: null,
+          priority: Priority.high,
+          completed: false,
+        },
+        {
+          id: id2.toString(), // Mock another valid ObjectId
+          description: 'Task 2',
+          creationDate: new Date(),
+          completionDate: null,
+          priority: Priority.high,
+          completed: true,
+        },
+      ];
 
-// describe('AppController', () => {
-//   let catsController: CatsController;
-//   let catsService: CatsService;
+      jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(mockedTasksDataBaseForReturning),
+      } as any);
+      
+      // Act
+      const result: Task[] = await service.getAll();
+      // Assert
+      expect(result).toEqual(expected);
+      expect(TaskModelMock.find).toHaveBeenCalled();
+      expect(TaskModelMock.find().exec).toHaveBeenCalled();
+    });
+  });
+});
 
-//   beforeEach(async () => {
-//     const moduleRef = await Test.createTestingModule({
-//         controllers: [CatsController],
-//         providers: [CatsService],
-//       }).compile();
+// @Injectable()
+// export class AppService {
+//   constructor(@InjectModel(Task.name) private model: Model<Task>) {}
 
-//     catsService = moduleRef.get<CatsService>(CatsService);
-//     catsController = moduleRef.get<CatsController>(CatsController);
-//   });
+//   async getAll(): Promise<TaskListDto> {
+//     try {
+//       const taskDocuments = await this.model.find().exec();
 
-//   describe('findAll', () => {
-//     it('should return an array of cats', async () => {
-//       const result = ['test'];
-//       jest.spyOn(catsService, 'findAll').mockImplementation(() => result);
-
-//       expect(await catsController.findAll()).toBe(result);
-//     });
-//   });
-// });
+//       return taskDocuments.map((taskDocument) =>
+//         this.taskDocumentMapper(taskDocument)
+//       );
+//     } catch (error) {
+//       console.error(error);
+//       throw new InternalServerErrorException();
+//     }
+//   }

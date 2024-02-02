@@ -15,6 +15,9 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 
+
+
+
 @Injectable()
 export class AppService {
   constructor(@InjectModel(Task.name) private model: Model<Task>) {}
@@ -27,7 +30,7 @@ export class AppService {
         this.taskDocumentMapper(taskDocument)
       );
     } catch (error) {
-      console.error(error);
+      console.error('Error in getAll', error);
       throw new InternalServerErrorException();
     }
   }

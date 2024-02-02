@@ -26,8 +26,11 @@ class MockModel<T> {
       exec: async () => this.data,
     };
   }
-  //evtl weitere Methoden ??
 }
+
+
+//TODO Testdaten in einem Array ablegen und in den einzelnen Testfällen wieder aufrufen 
+
 
 describe('Testing AppController', () => {
   let appController: AppController;
