@@ -426,6 +426,21 @@ describe('Testing AppController', () => {
         .mockImplementation(async (id, tasksToUpdate) =>
           Promise.reject(new InternalServerErrorException())
         );
+      const createdTask = {
+        description: 'description',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: 'high' as Priority,
+        completed: true,
+      };
+      try {
+        await appController.updatePartial('IdWithFalseFormat', createdTask);
+      } catch (e) {
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        } as ErrorDto);
+      }
     });
   });
 });
