@@ -442,5 +442,23 @@ describe('Testing AppController', () => {
         } as ErrorDto);
       }
     });
+    test('should call appService.updatePartial with incorrect data format (Boolean expected, String given) and return Bad Request', async () => {
+      jest
+        .spyOn(appService, 'updatePartial')
+        .mockImplementation(async (id, tasksToUpdate) =>
+          Promise.reject(new BadRequestException())
+        );
+      const createdTask = {
+        completed: 'false is a string',
+      } as any;
+      try {
+        await appController.updatePartial('id', createdTask);
+      } catch (e) {
+        expect(e.response).toEqual({
+          message: 'Bad Request',
+          statusCode: 400,
+        } as ErrorDto);
+      }
+    });
   });
 });
