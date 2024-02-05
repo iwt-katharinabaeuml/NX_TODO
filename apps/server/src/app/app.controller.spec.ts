@@ -17,6 +17,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { TaskMapper } from './task.mapper';
 
 class MockModel<T> {
   constructor(private data: T[] = []) {}
@@ -45,6 +46,7 @@ describe('Testing AppController', () => {
           provide: getModelToken(Task.name),
           useValue: new MockModel<TaskDocument>(),
         },
+        TaskMapper
       ],
     }).compile();
 

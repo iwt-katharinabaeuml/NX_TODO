@@ -14,23 +14,22 @@ import {
 } from './models/dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-
-
-
+import { TaskMapper } from './task.mapper';
 
 @Injectable()
 export class AppService {
-  constructor(@InjectModel(Task.name) private model: Model<Task>) {}
+  constructor(
+    @InjectModel(Task.name) private model: Model<Task>,
+    private readonly mapper: TaskMapper
+  ) {}
 
   async getAll(): Promise<TaskListDto> {
     try {
       const taskDocuments = await this.model.find().exec();
 
-      return taskDocuments.map((taskDocument) =>
-        this.taskDocumentMapper(taskDocument)
-      );
+      return this.mapper.taskDocumentsMapper(taskDocuments);
     } catch (error) {
-      console.error('Error in getAll', error);
+      // console.error('Error in getAll', error);
       throw new InternalServerErrorException();
     }
   }
@@ -39,7 +38,7 @@ export class AppService {
     try {
       const taskDocument = await this.model.findById(id).exec();
 
-      return this.taskDocumentMapper(taskDocument);
+      return this.mapper.taskDocumentMapper(taskDocument);
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException();
@@ -49,8 +48,8 @@ export class AppService {
   async create(task: CreateTaskDto): Promise<TaskDto> {
     try {
       return new Promise<TaskDto>((resolve, reject) => {
-        this.model.create(this.createDtoMapper(task)).then((taskDocument) => {
-          resolve(this.taskDocumentMapper(taskDocument));
+        this.model.create(this.mapper.createDtoMapper(task)).then((taskDocument) => {
+          resolve(this.mapper.taskDocumentMapper(taskDocument));
         });
       });
     } catch (error) {
@@ -76,7 +75,7 @@ export class AppService {
   async update(id: string, task: UpdateTaskDto): Promise<TaskDto> {
     let taskDocument: TaskDocument;
     try {
-      const updateQuery = this.updateDtoMapper(task);
+      const updateQuery = this.mapper.updateDtoMapper(task);
 
       taskDocument = await this.model
         .findOneAndReplace({ _id: id }, updateQuery, {
@@ -93,7 +92,7 @@ export class AppService {
       throw new NotFoundException('Task not found'); // das geschieht ja gar nicht
     }
 
-    return this.taskDocumentMapper(taskDocument);
+    return this.mapper.taskDocumentMapper(taskDocument);
   }
 
   async updatePartial(
@@ -103,7 +102,7 @@ export class AppService {
     let taskDocument: TaskDocument;
 
     try {
-      const updateQuery = this.updateDtoMapper(task);
+      const updateQuery = this.mapper.updateDtoMapper(task);
 
       taskDocument = await this.model
         .findByIdAndUpdate(id, updateQuery, {
@@ -119,57 +118,6 @@ export class AppService {
       throw new NotFoundException('Task not found');
     }
 
-    return this.taskDocumentMapper(taskDocument);
-  }
-
-  private createDtoMapper(dto: CreateTaskDto) {
-    try {
-      return {
-        description: dto.description,
-        creationDate: new Date(dto.creationDate),
-        completionDate: Date.parse('1970-01-01T00:00:00.000+00:00'),
-        priority: dto.priority,
-        completed: dto.completed,
-      };
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  private updateDtoMapper(dto: UpdateTaskDto | UpdatePartialTaskDto) {
-    try {
-      return {
-        description: dto.description,
-        creationDate: dto.creationDate ? new Date(dto.creationDate) : undefined,
-        completionDate: dto.completionDate
-          ? new Date(dto.completionDate)
-          : undefined,
-        priority: dto.priority,
-        completed: dto.completed,
-        $inc: { _version: 1 },
-      };
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  private taskDocumentMapper(
-    document: Task & { _id: Types.ObjectId }
-  ): TaskDto {
-    try {
-      return {
-        id: document['_id'].toString(),
-        description: document.description,
-        creationDate: document.creationDate,
-        completionDate: document.completionDate,
-        priority: document.priority as Priority,
-        completed: document.completed,
-      } as TaskDto;
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException();
-    }
+    return this.mapper.taskDocumentMapper(taskDocument);
   }
 }

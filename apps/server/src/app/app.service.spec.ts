@@ -4,9 +4,12 @@ import { AppService } from './app.service';
 import { Priority, Task } from './models/task';
 import { Model, Types } from 'mongoose';
 import { TaskDto, TaskListDto } from './models/dto';
+import { TaskMapper } from './task.mapper';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('AppService', () => {
   let service: AppService;
+  let mapper: TaskMapper;
   let TaskModelMock: Model<Task>;
 
   beforeEach(async () => {
@@ -18,12 +21,15 @@ describe('AppService', () => {
           useValue: {
             find: jest.fn(),
             exec: jest.fn(),
+            findById: jest.fn(),
           },
         },
+        TaskMapper,
       ],
     }).compile();
 
     service = module.get<AppService>(AppService);
+    mapper = module.get<TaskMapper>(TaskMapper);
     TaskModelMock = module.get<Model<Task>>(getModelToken('Task'));
   });
 
@@ -32,10 +38,10 @@ describe('AppService', () => {
       const id1 = new Types.ObjectId();
 
       const id2 = new Types.ObjectId();
-      // Arrange
+
       const mockedTasksDataBaseForReturning: any = [
         {
-          _id: id1, // Mock a valid ObjectId
+          _id: id1,
           description: 'Task 1',
           creationDate: new Date(),
           completionDate: null,
@@ -43,7 +49,7 @@ describe('AppService', () => {
           completed: false,
         },
         {
-          _id: id2, // Mock another valid ObjectId
+          _id: id2,
           description: 'Task 2',
           creationDate: new Date(),
           completionDate: null,
@@ -54,7 +60,7 @@ describe('AppService', () => {
 
       const expected = [
         {
-          id: id1.toString(), // Mock a valid ObjectId
+          id: id1.toString(),
           description: 'Task 1',
           creationDate: new Date(),
           completionDate: null,
@@ -62,25 +68,158 @@ describe('AppService', () => {
           completed: false,
         },
         {
-          id: id2.toString(), // Mock another valid ObjectId
+          id: id2.toString(),
           description: 'Task 2',
           creationDate: new Date(),
           completionDate: null,
           priority: Priority.high,
           completed: true,
         },
-      ];
+      ] as TaskListDto;
 
       jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
         exec: jest.fn().mockResolvedValueOnce(mockedTasksDataBaseForReturning),
       } as any);
-      
-      // Act
+
+      jest.spyOn(mapper, 'taskDocumentsMapper').mockReturnValueOnce(expected);
+
       const result: Task[] = await service.getAll();
-      // Assert
+
       expect(result).toEqual(expected);
-      expect(TaskModelMock.find).toHaveBeenCalled();
-      expect(TaskModelMock.find().exec).toHaveBeenCalled();
+    });
+  });
+
+  test('should return an error', async () => {
+    const id1 = new Types.ObjectId();
+
+    const id2 = new Types.ObjectId();
+
+    const expected = [
+      {
+        id: id1.toString(),
+        description: 'Task 1',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: Priority.high,
+        completed: false,
+      },
+      {
+        id: id2.toString(),
+        description: 'Task 2',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: Priority.high,
+        completed: true,
+      },
+    ] as TaskListDto;
+
+    jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce(null),
+    } as any);
+
+    jest.spyOn(mapper, 'taskDocumentsMapper').mockImplementation(() => {
+      throw new InternalServerErrorException({
+        message: 'Internal Server Error',
+        statusCode: 500,
+      });
+    });
+
+    // Act
+    try {
+      const result: Task[] = await service.getAll();
+    } catch (e) {
+      // Assert
+      expect(e).toBeInstanceOf(InternalServerErrorException);
+      expect(e.response).toEqual({
+        message: 'Internal Server Error',
+        statusCode: 500,
+      });
+    }
+  });
+
+  test('should return an error #2', async () => {
+    const id1 = null;
+
+    const id2 = new Types.ObjectId();
+
+    const mockedTasksDataBaseForReturning: any = [
+      {
+        _id: id1,
+        description: 'Task 1',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: Priority.high,
+        completed: false,
+      },
+      {
+        _id: id2,
+        description: 'Task 2',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: Priority.high,
+        completed: true,
+      },
+    ];
+
+    jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce(mockedTasksDataBaseForReturning),
+    } as any);
+
+    jest.spyOn(mapper, 'taskDocumentsMapper').mockImplementation(() => {
+      throw new InternalServerErrorException({
+        message: 'Internal Server Error',
+        statusCode: 500,
+      });
+    });
+
+    // Act
+    try {
+      const result: Task[] = await service.getAll();
+    } catch (e) {
+      // Assert
+      expect(e).toBeInstanceOf(InternalServerErrorException);
+      expect(e.response).toEqual({
+        message: 'Internal Server Error',
+        statusCode: 500,
+      });
+    }
+  });
+
+  describe('getOne', () => {
+    test('should return data in correct format for valid ID', async () => {
+      const validId = new Types.ObjectId();
+  
+      const mockedTasksDataBaseForReturning = {
+        id: validId.toString(),
+        description: 'Task 1',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: Priority.high,
+        completed: true,
+      }as TaskDto
+  
+      const expected = {
+        id: validId.toString(),
+        description: 'Task 1',
+        creationDate: new Date(),
+        completionDate: null,
+        priority: Priority.high,
+        completed: false,
+      } as TaskDto;
+  
+   
+      jest.spyOn(TaskModelMock,'findById').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(mockedTasksDataBaseForReturning),
+      } as any);
+  
+
+      jest.spyOn(mapper, 'taskDocumentMapper').mockReturnValueOnce(expected);
+
+      const result: TaskDto = await service.getOne(validId.toString());
+      console.log('thats the result', result)
+  
+      expect(result).toEqual(expected);
+     
     });
   });
 });
@@ -100,4 +239,3 @@ describe('AppService', () => {
 //       console.error(error);
 //       throw new InternalServerErrorException();
 //     }
-//   }
