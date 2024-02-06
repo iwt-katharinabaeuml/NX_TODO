@@ -3,7 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from './app.service';
 import { Priority, Task, TaskDocument } from './models/task';
 import { Model, Types } from 'mongoose';
-import { CreateTaskDto, TaskDto, TaskListDto } from './models/dto';
+import {
+  CreateTaskDto,
+  TaskDto,
+  TaskListDto,
+  UpdateTaskDto,
+} from './models/dto';
 import { TaskMapper } from './task.mapper';
 import { InternalServerErrorException } from '@nestjs/common';
 
@@ -23,6 +28,7 @@ describe('AppService', () => {
             exec: jest.fn(),
             findById: jest.fn(),
             create: jest.fn(),
+            findOneAndReplace: jest.fn(),
           },
         },
         TaskMapper,
@@ -91,8 +97,6 @@ describe('AppService', () => {
   });
 
   test('should return an error', async () => {
-
-
     jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
       exec: jest.fn().mockResolvedValueOnce(null),
     } as any);
@@ -162,7 +166,7 @@ describe('AppService', () => {
   });
 
   describe('getOne', () => {
-    test('should return data in correct format for valid ID', async () => {
+    test('should return data in correct format', async () => {
       const validId = new Types.ObjectId();
 
       const mockedTasksDataBaseForReturning = {
@@ -314,6 +318,46 @@ describe('AppService', () => {
           statusCode: 500,
         });
       }
+    });
+  });
+
+  describe('put / update', () => {
+    it('should update task and return updated task', async () => {
+      const id = 'task-id';
+      const updateTaskDto: UpdateTaskDto = {
+        description: 'updated description',
+        creationDate: new Date('2088/02/02'),
+        completed: true,
+        completionDate: new Date('2077/02/02'),
+        priority: Priority.high,
+      };
+
+      const updatedTaskDocument = {
+        _id: 'task-id',
+        description: 'updated description',
+        creationDate: new Date('2088/02/02'),
+        completionDate: new Date('2077/02/02'),
+        priority: Priority.high,
+        completed: true,
+      };
+
+      jest
+        .spyOn(TaskModelMock, 'findOneAndReplace')
+        .mockReturnValueOnce({
+            exec: jest.fn().mockResolvedValueOnce(updatedTaskDocument)} as any
+        );
+
+      const expectedTaskDto: TaskDto = {
+        id: updatedTaskDocument._id,
+        description: updatedTaskDocument.description,
+        creationDate: updatedTaskDocument.creationDate,
+        completionDate: updatedTaskDocument.completionDate,
+        priority: updatedTaskDocument.priority,
+        completed: updatedTaskDocument.completed,
+      };
+      const result: TaskDto = await service.update(id, updateTaskDto);
+
+      expect(result).toEqual(expectedTaskDto);
     });
   });
 });
