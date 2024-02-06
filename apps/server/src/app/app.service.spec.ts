@@ -7,10 +7,14 @@ import {
   CreateTaskDto,
   TaskDto,
   TaskListDto,
+  UpdatePartialTaskDto,
   UpdateTaskDto,
 } from './models/dto';
 import { TaskMapper } from './task.mapper';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 describe('AppService', () => {
   let service: AppService;
@@ -29,6 +33,7 @@ describe('AppService', () => {
             findById: jest.fn(),
             create: jest.fn(),
             findOneAndReplace: jest.fn(),
+            findByIdAndUpdate: jest.fn(),
           },
         },
         TaskMapper,
@@ -94,75 +99,75 @@ describe('AppService', () => {
 
       expect(result).toEqual(expected);
     });
-  });
 
-  test('should return an error', async () => {
-    jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
-      exec: jest.fn().mockResolvedValueOnce(null),
-    } as any);
+    test('should return an error', async () => {
+      jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(null),
+      } as any);
 
-    jest.spyOn(mapper, 'taskDocumentsMapper').mockImplementation(() => {
-      throw new InternalServerErrorException({
-        message: 'Internal Server Error',
-        statusCode: 500,
+      jest.spyOn(mapper, 'taskDocumentsMapper').mockImplementation(() => {
+        throw new InternalServerErrorException({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
       });
+
+      try {
+        const result: Task[] = await service.getAll();
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      }
     });
 
-    try {
-      const result: Task[] = await service.getAll();
-    } catch (e) {
-      expect(e).toBeInstanceOf(InternalServerErrorException);
-      expect(e.response).toEqual({
-        message: 'Internal Server Error',
-        statusCode: 500,
+    test('should return an error #2', async () => {
+      const id1 = null;
+
+      const id2 = new Types.ObjectId();
+
+      const mockedTasksDataBaseForReturning: any = [
+        {
+          _id: id1,
+          description: 'Task 1',
+          creationDate: new Date(),
+          completionDate: null,
+          priority: Priority.high,
+          completed: false,
+        },
+        {
+          _id: id2,
+          description: 'Task 2',
+          creationDate: new Date(),
+          completionDate: null,
+          priority: Priority.high,
+          completed: true,
+        },
+      ];
+
+      jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(mockedTasksDataBaseForReturning),
+      } as any);
+
+      jest.spyOn(mapper, 'taskDocumentsMapper').mockImplementation(() => {
+        throw new InternalServerErrorException({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
       });
-    }
-  });
 
-  test('should return an error #2', async () => {
-    const id1 = null;
-
-    const id2 = new Types.ObjectId();
-
-    const mockedTasksDataBaseForReturning: any = [
-      {
-        _id: id1,
-        description: 'Task 1',
-        creationDate: new Date(),
-        completionDate: null,
-        priority: Priority.high,
-        completed: false,
-      },
-      {
-        _id: id2,
-        description: 'Task 2',
-        creationDate: new Date(),
-        completionDate: null,
-        priority: Priority.high,
-        completed: true,
-      },
-    ];
-
-    jest.spyOn(TaskModelMock, 'find').mockReturnValueOnce({
-      exec: jest.fn().mockResolvedValueOnce(mockedTasksDataBaseForReturning),
-    } as any);
-
-    jest.spyOn(mapper, 'taskDocumentsMapper').mockImplementation(() => {
-      throw new InternalServerErrorException({
-        message: 'Internal Server Error',
-        statusCode: 500,
-      });
+      try {
+        const result: Task[] = await service.getAll();
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      }
     });
-
-    try {
-      const result: Task[] = await service.getAll();
-    } catch (e) {
-      expect(e).toBeInstanceOf(InternalServerErrorException);
-      expect(e.response).toEqual({
-        message: 'Internal Server Error',
-        statusCode: 500,
-      });
-    }
   });
 
   describe('getOne', () => {
@@ -252,7 +257,6 @@ describe('AppService', () => {
         .mockReturnValueOnce(expectedTaskDto);
 
       const result: TaskDto = await service.create(mockedCreateTaskDto);
-      console.log('thats the result', result);
 
       expect(result).toEqual(expectedTaskDto); // hier evtl den Task ausschreiben? Type?
     });
@@ -322,7 +326,7 @@ describe('AppService', () => {
   });
 
   describe('put / update', () => {
-    it('should update task and return updated task', async () => {
+    test('should update task and return updated task', async () => {
       const id = 'task-id';
       const updateTaskDto: UpdateTaskDto = {
         description: 'updated description',
@@ -340,13 +344,6 @@ describe('AppService', () => {
         priority: Priority.high,
         completed: true,
       };
-
-      jest
-        .spyOn(TaskModelMock, 'findOneAndReplace')
-        .mockReturnValueOnce({
-            exec: jest.fn().mockResolvedValueOnce(updatedTaskDocument)} as any
-        );
-
       const expectedTaskDto: TaskDto = {
         id: updatedTaskDocument._id,
         description: updatedTaskDocument.description,
@@ -355,42 +352,203 @@ describe('AppService', () => {
         priority: updatedTaskDocument.priority,
         completed: updatedTaskDocument.completed,
       };
-      const result: TaskDto = await service.update(id, updateTaskDto);
+      jest
+        .spyOn(mapper, 'updateDtoMapper')
+        .mockReturnValueOnce(expectedTaskDto as any);
+      jest
+        .spyOn(mapper, 'taskDocumentMapper')
+        .mockReturnValueOnce(expectedTaskDto);
+
+      jest.spyOn(TaskModelMock, 'findOneAndReplace').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(updatedTaskDocument),
+      } as any);
+
+      const result: TaskDto = await service.update(id, updateTaskDto); // id-value total irrelevant
+
+      expect(mapper.updateDtoMapper).toHaveBeenCalledWith(updateTaskDto); // überprüfen, dass der Mapper auch wirklich aufgrufen wurde; Funktion in seperatem File geprüft
+      expect(mapper.taskDocumentMapper).toHaveBeenCalledWith(
+        updatedTaskDocument
+      ); // überprüfen, dass der Mapper auch wirklich aufgrufen wurde; Funktion in seperatem File geprüft
+      expect(result).toEqual(expectedTaskDto);
+    });
+    test('should return Internal Server Error Mapping', async () => {
+      const id = 'task-id';
+      const updateTaskDto: UpdateTaskDto = {
+        description: 'updated description',
+        creationDate: new Date('2088/02/02'),
+        completed: true,
+        completionDate: new Date('2077/02/02'),
+        priority: Priority.high,
+      };
+
+      //   jest.spyOn(TaskModelMock, 'findOneAndReplace').mockReturnValueOnce({
+      //     exec: jest.fn().mockResolvedValueOnce(null),
+      //   } as any);
+
+      jest.spyOn(mapper, 'updateDtoMapper').mockImplementation(() => {
+        throw new InternalServerErrorException({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      });
+
+      try {
+        const result: TaskDto = await service.update(id, updateTaskDto);
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      }
+    });
+    test('should return Internal Server Error / null', async () => {
+      // sinnfrei?
+      const updateTaskDto: UpdateTaskDto = {
+        description: 'updated description',
+        creationDate: new Date('2088/02/02'),
+        completed: true,
+        completionDate: new Date('2077/02/02'),
+        priority: Priority.high,
+      };
+
+      // jest.spyOn(TaskModelMock, 'findOneAndReplace').mockReturnValueOnce({
+      //   exec: jest.fn().mockResolvedValueOnce(updateTaskDto),
+      // } as any);
+
+      jest.spyOn(mapper, 'updateDtoMapper').mockImplementation(() => {
+        throw new InternalServerErrorException({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      });
+
+      try {
+        const result: TaskDto = await service.update(null, null);
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      }
+    });
+  });
+  describe('patch / updatePartial', () => {
+    test('should update task partially and return updated task correctly', async () => {
+      const id = 'task-id';
+      const updatePartialTaskDto: UpdatePartialTaskDto = {
+        description: 'updated description',
+        creationDate: new Date(),
+        completionDate: new Date(),
+        priority: Priority.high,
+        completed: true,
+      };
+      const updatedTaskDocument = {
+        _id: id,
+        description: 'updated description',
+        creationDate: new Date(),
+        completionDate: new Date(),
+        priority: Priority.high,
+        completed: true,
+        $inc: { _version: 1 },
+      };
+      const expectedTaskDto: TaskDto = {
+        id: updatedTaskDocument._id,
+        description: updatedTaskDocument.description,
+        creationDate: updatedTaskDocument.creationDate,
+        completionDate: updatedTaskDocument.completionDate,
+        priority: updatedTaskDocument.priority,
+        completed: updatedTaskDocument.completed,
+      };
+      jest
+        .spyOn(mapper, 'updateDtoMapper')
+        .mockReturnValue(updatePartialTaskDto as any);
+      jest.spyOn(TaskModelMock, 'findByIdAndUpdate').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(updatedTaskDocument),
+      } as any);
+
+      const result: TaskDto = await service.updatePartial(
+        id,
+        updatePartialTaskDto
+      );
 
       expect(result).toEqual(expectedTaskDto);
+      expect(mapper.updateDtoMapper).toHaveBeenCalledWith(updatePartialTaskDto);
+      expect(TaskModelMock.findByIdAndUpdate).toHaveBeenCalled();
+    });
+    test('should throw Internal Server Error because of updateDtoMapper', async () => {
+      const updatePartialTaskDto: UpdatePartialTaskDto = {
+        description: 'updated description',
+        creationDate: new Date(),
+        completionDate: new Date(),
+        priority: Priority.high,
+        completed: true,
+      };
+
+      jest.spyOn(mapper, 'updateDtoMapper').mockImplementationOnce(() => {
+        throw new InternalServerErrorException({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      });
+      jest.spyOn(TaskModelMock, 'findByIdAndUpdate').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(null),
+      } as any);
+
+      try {
+        await service.updatePartial('id', updatePartialTaskDto);
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      }
+    });
+    test('should throw Internal Server Error because of taskDocumentMapper', async () => {
+      const updatePartialTaskDto: UpdatePartialTaskDto = {
+        description: 'updated description',
+        creationDate: new Date(),
+        completionDate: new Date(),
+        priority: Priority.high,
+        completed: true,
+      };
+      const updatedTaskDocument = {
+        _id: 'id',
+        description: 'updated description',
+        creationDate: new Date(),
+        completionDate: new Date(),
+        priority: Priority.high,
+        completed: true,
+        $inc: { _version: 1 },
+      };
+      jest
+        .spyOn(mapper, 'updateDtoMapper')
+        .mockReturnValue(updatePartialTaskDto as any);
+
+      jest.spyOn(TaskModelMock, 'findByIdAndUpdate').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(updatedTaskDocument),
+      } as any);
+
+      jest.spyOn(mapper, 'taskDocumentMapper').mockImplementationOnce(() => {
+        throw new InternalServerErrorException({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      });
+      
+      try {
+        await service.updatePartial('id', updatePartialTaskDto);
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      }
+      expect(mapper.updateDtoMapper).toHaveBeenCalledWith(updatePartialTaskDto);
+      expect(TaskModelMock.findByIdAndUpdate).toHaveBeenCalled();
     });
   });
 });
-
-//   test('should call appService.deleteOne null', async () => {
-//     jest
-//       .spyOn(appService, 'deleteOne')
-//       .mockImplementationOnce((id: any) =>
-//         Promise.reject(new InternalServerErrorException())
-//       );
-//     try {
-//       await appController.deleteOne(null);
-//     } catch (e) {
-//       expect(e.response).toEqual({
-//         message: 'Internal Server Error',
-//         statusCode: 500,
-//       });
-//     }
-//     expect(appService.deleteOne).toHaveBeenCalledWith(null);
-//   });
-
-// @Injectable()
-// export class AppService {
-//   constructor(@InjectModel(Task.name) private model: Model<Task>) {}
-
-//   async getAll(): Promise<TaskListDto> {
-//     try {
-//       const taskDocuments = await this.model.find().exec();
-
-//       return taskDocuments.map((taskDocument) =>
-//         this.taskDocumentMapper(taskDocument)
-//       );
-//     } catch (error) {
-//       console.error(error);
-//       throw new InternalServerErrorException();
-//     }

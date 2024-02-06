@@ -4,10 +4,10 @@ import { HydratedDocument } from 'mongoose';
 
 export type TaskDocument = HydratedDocument<Task>;
 export enum Priority {
-  'high',
-  'medium',
-  'low',
-  'none',
+  'high' = 'high',
+  'medium' = 'medium',
+  'low' = 'low',
+  'none' = 'none',
 }
 @Schema()
 export class Task {
@@ -22,7 +22,7 @@ export class Task {
 
   @Prop({ type: String, enum: Object.values(Priority) })
   @IsEnum(Priority, { message: 'Invalid priority' })
-  priority: Priority
+  priority: Priority;
 
   @Prop({ default: false })
   completed: boolean;

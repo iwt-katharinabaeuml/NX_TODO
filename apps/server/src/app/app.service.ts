@@ -86,7 +86,7 @@ export class AppService {
         })
         .exec();
     } catch (error) {
-      console.error(error);
+      //console.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -112,13 +112,13 @@ export class AppService {
         })
         .exec();
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       throw new InternalServerErrorException();
     }
 
-    if (!taskDocument) {
-      throw new NotFoundException('Task not found');
-    }
+    // if (!taskDocument) {
+    //   throw new NotFoundException('Task not found');
+    // }
 
     return this.mapper.taskDocumentMapper(taskDocument);
   }
