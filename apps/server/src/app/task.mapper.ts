@@ -7,7 +7,7 @@ import {
   TaskDto,
   TaskListDto,
 } from './models/dto';
-import { Task, Priority, TaskDocument } from './models/task';
+import { Priority, TaskDocument } from './models/task';
 
 @Injectable()
 export class TaskMapper {

@@ -11,10 +11,7 @@ import {
   UpdateTaskDto,
 } from './models/dto';
 import { TaskMapper } from './task.mapper';
-import {
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('AppService', () => {
   let service: AppService;
@@ -34,6 +31,7 @@ describe('AppService', () => {
             create: jest.fn(),
             findOneAndReplace: jest.fn(),
             findByIdAndUpdate: jest.fn(),
+            findByIdAndDelete: jest.fn(),
           },
         },
         TaskMapper,
@@ -192,15 +190,30 @@ describe('AppService', () => {
         completed: false,
       } as TaskDto;
 
-      jest.spyOn(TaskModelMock, 'findById').mockReturnValueOnce({
-        // keine Möglichkeit Id anzugeben
-        exec: jest.fn().mockResolvedValueOnce(mockedTasksDataBaseForReturning),
-      } as any);
+      jest
+        .spyOn(TaskModelMock, 'findById')
+        .mockImplementationOnce((id: string) => {
+          console.log('findById', id);
+          return {
+            // keine Möglichkeit Id anzugeben
+            exec: jest.fn().mockImplementationOnce(() => {
+              console.log('exec', id);
+              if (id === validId.toString()) {
+                return mockedTasksDataBaseForReturning;
+              }
+
+              return null;
+            }),
+          } as any;
+        });
 
       jest.spyOn(mapper, 'taskDocumentMapper').mockReturnValueOnce(expected);
 
-      const result: TaskDto = await service.getOne(validId.toString()); // Id völlig egal --> how to change? need to change?
+      const result: TaskDto = await service.getOne(
+        new Types.ObjectId().toString()
+      ); // Id völlig egal --> how to change? need to change?
 
+      console.log(result);
       expect(result).toEqual(expected);
     });
     test('should return new InternalErrorExpectation ', async () => {
@@ -324,7 +337,22 @@ describe('AppService', () => {
       }
     });
   });
+  describe('deleteOne', () => {
+    test('should delete the correct task', async () => {
+      jest
+        .spyOn(TaskModelMock, 'findByIdAndDelete')
+        .mockResolvedValueOnce(null);
 
+      const result: TaskDto = await service.deleteOne('id');
+
+      console.log(result);
+
+      expect(result).toEqual(null);
+
+      expect(TaskModelMock.findByIdAndDelete).toHaveBeenCalledWith('id');
+    });
+    // test ('should throw NotFound Exception ')
+  });
   describe('put / update', () => {
     test('should update task and return updated task', async () => {
       const id = 'task-id';
@@ -537,7 +565,7 @@ describe('AppService', () => {
           statusCode: 500,
         });
       });
-      
+
       try {
         await service.updatePartial('id', updatePartialTaskDto);
       } catch (e) {

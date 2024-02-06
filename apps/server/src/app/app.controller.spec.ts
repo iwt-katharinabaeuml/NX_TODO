@@ -29,10 +29,6 @@ class MockModel<T> {
   }
 }
 
-
-//TODO Testdaten in einem Array ablegen und in den einzelnen Testfällen wieder aufrufen 
-
-
 describe('Testing AppController', () => {
   let appController: AppController;
   let appService: AppService;

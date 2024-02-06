@@ -90,9 +90,9 @@ export class AppService {
       throw new InternalServerErrorException();
     }
 
-    if (!taskDocument) {
-      throw new NotFoundException('Task not found'); // das geschieht ja gar nicht
-    }
+    // if (!taskDocument) {
+    //   throw new NotFoundException('Task not found'); // das geschieht ja gar nicht
+    // }
 
     return this.mapper.taskDocumentMapper(taskDocument);
   }
