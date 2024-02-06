@@ -40,7 +40,7 @@ export class AppService {
 
       return this.mapper.taskDocumentMapper(taskDocument);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -48,9 +48,11 @@ export class AppService {
   async create(task: CreateTaskDto): Promise<TaskDto> {
     try {
       return new Promise<TaskDto>((resolve, reject) => {
-        this.model.create(this.mapper.createDtoMapper(task)).then((taskDocument) => {
-          resolve(this.mapper.taskDocumentMapper(taskDocument));
-        });
+        this.model
+          .create(this.mapper.createDtoMapper(task))
+          .then((taskDocument) => {
+            resolve(this.mapper.taskDocumentMapper(taskDocument));
+          });
       });
     } catch (error) {
       console.error(error);

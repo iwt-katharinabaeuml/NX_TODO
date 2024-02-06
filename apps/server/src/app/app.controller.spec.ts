@@ -114,8 +114,8 @@ describe('Testing AppController', () => {
   });
 
   describe('testing GET by ID', () => {
-    test('should call appService.getOne and return a task', async () => {
-      const taskId = '1';
+    test('should call appService.getOne and return a task', async () => { 
+      const taskId = '1'; // hier komplett überflüssig, wa ... 
       const task: TaskDto = {
         id: taskId,
         description: 'Test Task 1',
@@ -126,7 +126,7 @@ describe('Testing AppController', () => {
       };
 
       jest.spyOn(appService, 'getOne').mockResolvedValue(task);
-      const result = await appController.getOne(taskId);
+      const result = await appController.getOne(taskId); // funktioniert mit jedem String 
       expect(result).toEqual(task);
     });
 
