@@ -195,7 +195,6 @@ describe('AppService', () => {
         .mockImplementationOnce((id: string) => {
           console.log('findById', id);
           return {
-            // keine Möglichkeit Id anzugeben
             exec: jest.fn().mockImplementationOnce(() => {
               console.log('exec', id);
               if (id === validId.toString()) {
