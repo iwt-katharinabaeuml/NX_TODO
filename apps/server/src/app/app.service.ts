@@ -86,7 +86,6 @@ export class AppService {
         })
         .exec();
     } catch (error) {
-      //console.error(error);
       throw new InternalServerErrorException();
     }
 

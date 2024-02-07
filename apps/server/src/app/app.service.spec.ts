@@ -354,7 +354,7 @@ describe('AppService', () => {
   });
   describe('put / update', () => {
     test('should update task and return updated task', async () => {
-      const id = 'task-id';
+      const id: string = 'task-id';
       const updateTaskDto: UpdateTaskDto = {
         description: 'updated description',
         creationDate: new Date('2088/02/02'),
@@ -362,7 +362,7 @@ describe('AppService', () => {
         completionDate: new Date('2077/02/02'),
         priority: Priority.high,
       };
-
+    
       const updatedTaskDocument = {
         _id: 'task-id',
         description: 'updated description',
@@ -371,6 +371,7 @@ describe('AppService', () => {
         priority: Priority.high,
         completed: true,
       };
+    
       const expectedTaskDto: TaskDto = {
         id: updatedTaskDocument._id,
         description: updatedTaskDocument.description,
@@ -379,23 +380,32 @@ describe('AppService', () => {
         priority: updatedTaskDocument.priority,
         completed: updatedTaskDocument.completed,
       };
+    
       jest
         .spyOn(mapper, 'updateDtoMapper')
-        .mockReturnValueOnce(expectedTaskDto as any);
+        .mockReturnValueOnce(updatedTaskDocument as any);
+    
       jest
         .spyOn(mapper, 'taskDocumentMapper')
         .mockReturnValueOnce(expectedTaskDto);
-
-      jest.spyOn(TaskModelMock, 'findOneAndReplace').mockReturnValueOnce({
-        exec: jest.fn().mockResolvedValueOnce(updatedTaskDocument),
-      } as any);
-
-      const result: TaskDto = await service.update(id, updateTaskDto); // id-value total irrelevant
-
-      expect(mapper.updateDtoMapper).toHaveBeenCalledWith(updateTaskDto); // überprüfen, dass der Mapper auch wirklich aufgrufen wurde; Funktion in seperatem File geprüft
-      expect(mapper.taskDocumentMapper).toHaveBeenCalledWith(
-        updatedTaskDocument
-      ); // überprüfen, dass der Mapper auch wirklich aufgrufen wurde; Funktion in seperatem File geprüft
+    
+      jest
+        .spyOn(TaskModelMock, 'findOneAndReplace')
+        .mockImplementationOnce((filterQuery, updateQuery) => {
+          console.log('findOneAndReplace', filterQuery, updateQuery);
+          if (filterQuery._id === id) {
+            console.log('exec findOneAndReplace', filterQuery);
+            return {
+              exec: jest.fn().mockResolvedValueOnce(updatedTaskDocument),
+            } as any;
+          }
+          return null;
+        });
+    
+      const result: TaskDto = await service.update(id, updateTaskDto);
+    
+      expect(mapper.updateDtoMapper).toHaveBeenCalledWith(updateTaskDto);
+      expect(mapper.taskDocumentMapper).toHaveBeenCalledWith(updatedTaskDocument);
       expect(result).toEqual(expectedTaskDto);
     });
     test('should return Internal Server Error Mapping', async () => {
