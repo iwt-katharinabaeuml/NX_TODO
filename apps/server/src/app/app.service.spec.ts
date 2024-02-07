@@ -11,7 +11,10 @@ import {
   UpdateTaskDto,
 } from './models/dto';
 import { TaskMapper } from './task.mapper';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 describe('AppService', () => {
   let service: AppService;
@@ -336,22 +339,39 @@ describe('AppService', () => {
       }
     });
   });
+
   describe('deleteOne', () => {
-    test('should delete the correct task', async () => {
+    const taskId: string = 'task-id';
+
+    it('should delete task and return null', async () => {
       jest
         .spyOn(TaskModelMock, 'findByIdAndDelete')
         .mockResolvedValueOnce(null);
 
-      const result: TaskDto = await service.deleteOne('id');
+      const result: TaskDto = await service.deleteOne(taskId);
 
-      console.log(result);
+      expect(TaskModelMock.findByIdAndDelete).toHaveBeenCalledWith(taskId);
 
-      expect(result).toEqual(null);
-
-      expect(TaskModelMock.findByIdAndDelete).toHaveBeenCalledWith('id');
+      expect(result).toBeNull();
     });
-    // test ('should throw NotFound Exception ')
+
+    it('should throw InternalServerErrorException if an error occurs', async () => {
+      jest
+        .spyOn(TaskModelMock, 'findByIdAndDelete')
+        .mockResolvedValueOnce(null);
+      try {
+        await service.deleteOne(taskId);
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.response).toEqual({
+          message: 'Internal Server Error',
+          statusCode: 500,
+        });
+      }
+      expect(TaskModelMock.findByIdAndDelete).toHaveBeenCalledWith(taskId);
+    });
   });
+
   describe('put / update', () => {
     test('should update task and return updated task', async () => {
       const id: string = 'task-id';
@@ -362,7 +382,7 @@ describe('AppService', () => {
         completionDate: new Date('2077/02/02'),
         priority: Priority.high,
       };
-    
+
       const updatedTaskDocument = {
         _id: 'task-id',
         description: 'updated description',
@@ -371,7 +391,7 @@ describe('AppService', () => {
         priority: Priority.high,
         completed: true,
       };
-    
+
       const expectedTaskDto: TaskDto = {
         id: updatedTaskDocument._id,
         description: updatedTaskDocument.description,
@@ -380,15 +400,15 @@ describe('AppService', () => {
         priority: updatedTaskDocument.priority,
         completed: updatedTaskDocument.completed,
       };
-    
+
       jest
         .spyOn(mapper, 'updateDtoMapper')
         .mockReturnValueOnce(updatedTaskDocument as any);
-    
+
       jest
         .spyOn(mapper, 'taskDocumentMapper')
         .mockReturnValueOnce(expectedTaskDto);
-    
+
       jest
         .spyOn(TaskModelMock, 'findOneAndReplace')
         .mockImplementationOnce((filterQuery, updateQuery) => {
@@ -401,11 +421,13 @@ describe('AppService', () => {
           }
           return null;
         });
-    
+
       const result: TaskDto = await service.update(id, updateTaskDto);
-    
+
       expect(mapper.updateDtoMapper).toHaveBeenCalledWith(updateTaskDto);
-      expect(mapper.taskDocumentMapper).toHaveBeenCalledWith(updatedTaskDocument);
+      expect(mapper.taskDocumentMapper).toHaveBeenCalledWith(
+        updatedTaskDocument
+      );
       expect(result).toEqual(expectedTaskDto);
     });
     test('should return Internal Server Error Mapping', async () => {
