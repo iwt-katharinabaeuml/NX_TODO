@@ -66,7 +66,7 @@ export class AppService {
         await this.model
           .findByIdAndDelete(id)
           .then((t) => resolve(null))
-          .catch((e) => reject(new NotFoundException('Task not found')));
+          .catch((e) => reject(new NotFoundException('Task not found'))); /// wird das jemals geworfen? ich denke nicht
       });
     } catch (error) {
       console.error(error);

@@ -237,8 +237,6 @@ describe('AppService', () => {
   });
   describe('create', () => {
     test('should create Task in correct Format', async () => {
-      // do not touch this test
-
       const mockedCreateTaskDto: CreateTaskDto = {
         description: 'description',
         creationDate: new Date(),
@@ -271,9 +269,16 @@ describe('AppService', () => {
         .spyOn(mapper, 'taskDocumentMapper')
         .mockReturnValueOnce(expectedTaskDto);
 
+      jest
+        .spyOn(mapper, 'createDtoMapper')
+        .mockReturnValueOnce(mockedCreateTaskDto as any);
+
       const result: TaskDto = await service.create(mockedCreateTaskDto);
 
       expect(result).toEqual(expectedTaskDto); // hier evtl den Task ausschreiben? Type?
+      expect(TaskModelMock.create).toHaveBeenLastCalledWith(
+        mockedCreateTaskDto
+      );
     });
 
     test('should throw error because of mapper internal server error', async () => {
