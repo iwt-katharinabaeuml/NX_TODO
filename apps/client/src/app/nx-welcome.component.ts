@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <h1 class="text-3xl font-bold underline bg-slate-600">Hello world!</h1>
+    
   `,
   styles: [],
   encapsulation: ViewEncapsulation.None,
