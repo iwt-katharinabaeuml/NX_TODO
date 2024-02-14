@@ -53,7 +53,6 @@
     ],
     "sharedGlobals": []
   },
-  "nxCloudAccessToken": "ZjU0MzEyZTgtYTljMS00NTMyLTllYTUtMDc4ZGFiYjY3NWQ2fHJlYWQtd3JpdGU=",
   "generators": {
     "@nx/angular:application": {
       "style": "scss",
