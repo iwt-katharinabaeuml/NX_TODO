@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { Task } from '../../shared/task.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TodosService {
   private tasks: Task[] = [
@@ -16,16 +16,11 @@ export class TodosService {
   ];
 
   tasksChanged = new Subject<Task[]>();
-
   getTasks(): Task[] {
-    // Return a deep copy of tasks array to prevent unexpected mutations
     return this.tasks.slice();
   }
-
   addTask(task: Task) {
     this.tasks.push(task);
     this.tasksChanged.next(this.getTasks());
   }
-
-  // You can add other methods like deleteTask, updateTask, etc. as per your requirements
 }
