@@ -63,6 +63,7 @@
                     <button
                       type="button"
                       class="relative text-gray-400 hover:text-gray-500"
+                      (click)="toggleSlideOver()"
                     >
                       <span class="absolute -inset-2.5"></span>
                       <span class="sr-only">Close panel</span>
@@ -260,7 +261,51 @@
                     ></textarea>
                   </div>
                 </div>
-                <!-- Date Inputs-->
+                <div
+                  class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5"
+                >
+                  <!-- Date Inputs-->
+
+                  <div>
+                    <label
+                      for="project-description"
+                      class="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
+                      >Completion Date</label
+                    >
+                  </div>
+                  <div class="grid grid-cols-3 gap-4 sm:col-span-2">
+                    <textarea
+                      id="year_input"
+                      name="year_input"
+                      rows="1"
+                      style="resize: none; text-align: center"
+                      placeholder="YYYY"
+                      maxlength="4"
+                      minlength="4"
+                      class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    ></textarea>
+                    <textarea
+                      id="month_input"
+                      name="month_input"
+                      rows="1"
+                      placeholder="MM"
+                      maxlength="2"
+                      minlength="2"
+                      style="resize: none; text-align: center"
+                      class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    ></textarea>
+                    <textarea
+                      id="day_input"
+                      name="day_input"
+                      rows="1"
+                      style="resize: none; text-align: center"
+                      placeholder="DD"
+                      maxlength="2"
+                      minlength="2"
+                      class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    ></textarea>
+                  </div>
+                </div>
                 <!-- Priority -->
                 <fieldset
                   class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5"
@@ -399,6 +444,42 @@
               </div>
             </div>
 
+            <!-- Completed-->
+            <div
+              class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5"
+            >
+              <div>
+                <label
+                  for="project-description"
+                  class="block text-sm font-medium leading-6 text-gray-900"
+                  >Completed</label
+                >
+              </div>
+              <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
+              <div class="flex items-center">
+                <button
+                  type="button"
+                  class="bg-gray-200 relative mb-1 inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+                  role="switch"
+                  [ngClass]="{
+                    'bg-indigo-600': active, 
+                    'bg-gray': !active, 
+                  }"
+                  (click)="changeStatus()"
+                >
+                  <!-- Aktiviert: "translate-x-5", Deaktiviert: "translate-x-0" -->
+                  <span
+                    aria-hidden="true"
+                    [ngClass]="{
+                      'translate-x-5': active,
+                      'translate-x-0': !active
+                    }"
+                    class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                  ></span>
+                </button>
+              </div>
+            </div>
+
             <!-- Action buttons -->
             <div
               class="flex-shrink-0 border-t border-gray-200 px-4 py-5 sm:px-6"
@@ -406,6 +487,7 @@
               <div class="flex justify-end space-x-3">
                 <button
                   type="button"
+                  (click)="toggleSlideOver()"
                   class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                 >
                   Cancel

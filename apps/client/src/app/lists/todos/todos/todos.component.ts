@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { Task } from '../../shared/task.model';
 import { TodosService } from './todos.component.service';
-import { SlideOverService } from '../../../services/slide_over-service';
+import { SlideOverService } from '../../../services/slide_over.service';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 @Component({
@@ -25,8 +25,15 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
       transition('in => out', animate('500ms ease-in-out')),
       transition('out => in', animate('500ms ease-in-out'))
     ])
+  
   ]
+
 })
+
+
+// <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
+
+
 export class TodosComponent implements OnInit {
   tasks!: Task[];
   isOpen = false;
