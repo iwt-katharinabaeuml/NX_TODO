@@ -8,7 +8,9 @@ export class SlideOverService {
   private isOpenSubject = new BehaviorSubject<boolean>(false);
   isOpen$ = this.isOpenSubject.asObservable();
 
-  toggle(): void {
-    this.isOpenSubject.next(!this.isOpenSubject.value);
+  toggle() { 
+    const newValue = !this.isOpenSubject.value;
+    this.isOpenSubject.next(newValue);
+    console.log('toggle wurde aktiviert mit ' + newValue);
   }
 }

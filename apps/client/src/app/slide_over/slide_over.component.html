@@ -14,12 +14,11 @@
 -->
 
 <div
+  #dialog
   aria-labelledby="slide-over-title"
   role="dialog"
   aria-modal="true"
-  *ngIf="isOpen$ | async"
-  [@slideInOut]="isOpen$ ? 'in' : 'out'"
-  class="slide-over-container fixed inset-y-0 right-0 flex max-w-full pl-10 z-50"
+  class="slide-over-container fixed inset-y-0 right-0 flex max-w-full pl-10 z-50 pointer-events-none"
 >
   <!-- Background backdrop, show/hide based on slide-over state. -->
   <div class="fixed inset-0"></div>
@@ -39,7 +38,11 @@
               From: "translate-x-0"
               To: "translate-x-full"
           -->
-        <div class="pointer-events-auto w-screen max-w-2xl">
+        <div
+          #panel
+          name="panel"
+          class="pointer-events-auto w-screen max-w-2xl transform transition ease-in-out duration-500 sm:duration-700 translate-x-full"
+        >
           <form
             class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl"
           >
@@ -359,16 +362,16 @@
                       <div class="relative flex items-start">
                         <div class="absolute flex h-6 items-center">
                           <input
-                            id="private-access"
+                            id="low-access"
                             name="privacy"
-                            aria-describedby="private-access-description"
+                            aria-describedby="low-access-description"
                             type="radio"
                             class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                           />
                         </div>
                         <div class="pl-7 text-sm leading-6">
                           <label
-                            for="private-access"
+                            for="low-access"
                             class="font-medium text-gray-900"
                             >low</label
                           >
@@ -377,16 +380,16 @@
                       <div class="relative flex items-start">
                         <div class="absolute flex h-6 items-center">
                           <input
-                            id="private-access"
+                            id="none-access"
                             name="privacy"
-                            aria-describedby="private-access-description"
+                            aria-describedby="none-access-description"
                             type="radio"
                             class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                           />
                         </div>
                         <div class="pl-7 text-sm leading-6">
                           <label
-                            for="private-access"
+                            for="none-access"
                             class="font-medium text-gray-900"
                             >none</label
                           >
