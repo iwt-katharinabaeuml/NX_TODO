@@ -16,6 +16,8 @@ import { MenuSlideService } from '../services/slide_over.service';
 
 export class HeaderComponent implements AfterViewInit {
   @ViewChild('menu', { static: true }) menu!: ElementRef;
+  @ViewChild('newTaskButton', { static: true }) newTaskButton!: ElementRef;
+
 
   constructor(
     private menuSlideService: MenuSlideService,
@@ -28,13 +30,14 @@ export class HeaderComponent implements AfterViewInit {
 
     this.menuOpen$.subscribe((menuOpen) => {
       console.log('hier kommte es an mit ' + menuOpen )
-      if (menuOpen) {  this.renderer.removeClass(this.menu.nativeElement, 'opacity-100');
-        this.renderer.addClass(this.menu.nativeElement, 'opacity-0');
-      
+      if (menuOpen) {
+        this.renderer.setStyle(this.menu.nativeElement, 'opacity', '1');
+        this.renderer.setStyle(this.menu.nativeElement, 'z-index', '50');
       } else {
-       this.renderer.removeClass(this.menu.nativeElement, 'opacity-0');
-        this.renderer.addClass(this.menu.nativeElement, 'opacity-100');
+        this.renderer.setStyle(this.menu.nativeElement, 'opacity', '0');
+        this.renderer.setStyle(this.menu.nativeElement, 'z-index', '-1');
       }
+
     });
   }
 
