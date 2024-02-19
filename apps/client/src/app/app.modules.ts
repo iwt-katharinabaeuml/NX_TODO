@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { SlideOverService } from './services/slide_over.service';
+import { MenuSlideService, SlideOverService } from './services/slide_over.service';
 
 @NgModule({
   imports: [
@@ -9,7 +9,7 @@ import { SlideOverService } from './services/slide_over.service';
     BrowserAnimationsModule
   ],
   providers: [
-    SlideOverService 
+    SlideOverService, MenuSlideService
   ],
   bootstrap: [ ]
 })
