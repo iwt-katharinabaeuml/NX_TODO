@@ -58,4 +58,45 @@ export class SlideOverComponent {
   changeStatus(): void {
     this.active = !this.active;
   }
+
+@ViewChild('descriptionInput')
+
+  // @ViewChild('panel', { static: false }) panel: ElementRef | undefined;
+  // @ViewChild('dialog', { static: false }) dialog: ElementRef | undefined;
+
+  // constructor(
+  //   private slideOverService: SlideOverService,
+  //   private renderer: Renderer2
+  // ) {
+  //   this.isOpen$.subscribe((isOpen) => {
+  //     if (this.panel === undefined) return;
+
+  //     if (this.dialog === undefined) return;
+
+  //     if (isOpen) {
+  //       this.renderer['removeClass'](
+  //         this.panel.nativeElement,
+  //         'translate-x-full'
+  //       );
+  //       this.renderer['addClass'](this.panel.nativeElement, 'translate-x-0');
+  //       this.renderer['removeClass'](
+  //         this.dialog.nativeElement,
+  //         'pointer-events-none'
+  //       );
+  //     } else {
+  //       this.renderer['removeClass'](this.panel.nativeElement, 'translate-x-0');
+  //       this.renderer['addClass'](this.panel.nativeElement, 'translate-x-full');
+  //       this.renderer['addClass'](
+  //         this.dialog.nativeElement,
+  //         'pointer-events-none'
+  //       );
+  //     }
+  //   });
+  // }
+
+
+
+  resetAllFields():void {
+
+  }
 }
