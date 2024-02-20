@@ -127,8 +127,8 @@
                   </div>
                   <div class="sm:col-span-2">
                     <textarea
-                      id="project-description"
-                      name="project-description"
+                      name="descriptionInput"
+                      #descriptionInput
                       rows="3"
                       maxlength="500"
                       minlength="3"
@@ -233,8 +233,8 @@
                   </div>
                   <div class="grid grid-cols-3 gap-4 sm:col-span-2">
                     <textarea
-                      id="year_input"
-                      name="year_input"
+                      #creationDateYear
+                      name="creationDateYear"
                       rows="1"
                       style="resize: none; text-align: center"
                       placeholder="YYYY"
@@ -243,8 +243,8 @@
                       class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     ></textarea>
                     <textarea
-                      id="month_input"
-                      name="month_input"
+                      #creationDateMonth
+                      name="creationDateMonth"
                       rows="1"
                       placeholder="MM"
                       maxlength="2"
@@ -253,8 +253,8 @@
                       class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     ></textarea>
                     <textarea
-                      id="day_input"
-                      name="day_input"
+                      #creationDateDay
+                      name="creationDateDay"
                       rows="1"
                       style="resize: none; text-align: center"
                       placeholder="DD"
@@ -278,8 +278,8 @@
                   </div>
                   <div class="grid grid-cols-3 gap-4 sm:col-span-2">
                     <textarea
-                      id="year_input"
-                      name="year_input"
+                      #deletionDateYear
+                      name="deletionDateYear"
                       rows="1"
                       style="resize: none; text-align: center"
                       placeholder="YYYY"
@@ -288,8 +288,8 @@
                       class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     ></textarea>
                     <textarea
-                      id="month_input"
-                      name="month_input"
+                      #deletionDateMonth
+                      name="deletionDateMonth"
                       rows="1"
                       placeholder="MM"
                       maxlength="2"
@@ -298,8 +298,8 @@
                       class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     ></textarea>
                     <textarea
-                      id="day_input"
-                      name="day_input"
+                      #deletionDateDay
+                      name="deletionDateDay"
                       rows="1"
                       style="resize: none; text-align: center"
                       placeholder="DD"
@@ -496,6 +496,7 @@
                   Cancel
                 </button>
                 <button
+                  (click)="clearInputFields()"
                   type="button"
                   class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                 >

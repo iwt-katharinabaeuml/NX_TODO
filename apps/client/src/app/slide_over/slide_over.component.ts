@@ -59,7 +59,28 @@ export class SlideOverComponent {
     this.active = !this.active;
   }
 
-// @ViewChild('descriptionInput')
+ @ViewChild('descriptionInput', {static:true}) descriptionInput: any
+ @ViewChild('creationDateYear', {static:true}) creationDateYear: any
+ @ViewChild('creationDateMonth', {static:true}) creationDateMonth: any
+ @ViewChild('creationDateDay', {static:true}) creationDateDay: any
+ @ViewChild('deletionDateYear', {static:true})deletionDateYear: any
+ @ViewChild('deletionDateMonth', {static:true}) deletionDateMonth: any
+ @ViewChild('deletionDateDay', {static:true}) deletionDateDay: any
+
+
+
+ clearInputFields():void {
+  console.log("clearing the value",this.descriptionInput.nativeElement.value)
+  this.descriptionInput.nativeElement.value=null
+  this.creationDateDay.nativeElement.value=null
+  this.creationDateMonth.nativeElement.value=null
+  this.creationDateYear.nativeElement.value=null
+  this.deletionDateYear.nativeElement.value=null
+  this.deletionDateMonth.nativeElement.value=null
+  this.deletionDateDay.nativeElement.value=null
+
+
+ }
 
 //   // @ViewChild('panel', { static: false }) panel: ElementRef | undefined;
 //   // @ViewChild('dialog', { static: false }) dialog: ElementRef | undefined;
