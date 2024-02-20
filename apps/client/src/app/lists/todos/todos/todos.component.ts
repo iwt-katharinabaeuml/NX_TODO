@@ -42,7 +42,13 @@ export class TodosComponent implements OnInit {
   tasks!: Task[];
  isOpen = false;
 
-  constructor(private tdService: TodosService, private slideOverService: SlideOverService) {}
+  constructor(private tdService: TodosService, private slideOverService: SlideOverService) {
+
+
+  //  this.showAllOptions$.subscribe((showAll) => {
+  //   console.log('this is ' + showAll)
+  //   return showAll})
+  }
 
   ngOnInit(): void {
     this.tasks = this.tdService.getTasks(); 
@@ -57,7 +63,13 @@ export class TodosComponent implements OnInit {
   }
   toggleSlideOver(): void {
     this.slideOverService.toggle(); 
-    // Subscribing to slide over service to toggle isOpen
 
   }
+
+  toggleSlideOverCreate(): void {
+    this.slideOverService.showAll(true)
+    console.log('in component.ts showAll' + this.showAllOptions$)
+    }
+
+   showAllOptions$ = this.slideOverService.showAllOptions$ 
 }

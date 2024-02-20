@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SlideOverService } from '../services/slide_over.service';
-import { BehaviorSubject } from 'rxjs';
+
 
 @Component({
   selector: 'fse-slide-over',
@@ -42,9 +42,17 @@ export class SlideOverComponent {
         );
       }
     });
+
+
+
+
   }
 
   isOpen$ = this.slideOverService.isOpen$;
+
+
+  showAllOption$ = this.slideOverService.showAllOptions$
+
 
   toggleSlideOver(): void {
     this.slideOverService.toggle();
@@ -77,13 +85,20 @@ export class SlideOverComponent {
     this.deletionDateDay.nativeElement.value = null;
   }
 
-  // private isOpenMenu = new BehaviorSubject<boolean>(false);
+  @ViewChild('nonePriorityRadioButton') nonePriorityRadioButton!: ElementRef<HTMLInputElement>;
+  clearPrioritySelection(): void {
+    this.nonePriorityRadioButton.nativeElement.checked = true;
 
-  // menuOpen$ = this.isOpenMenu.asObservable();
 
-  // toggle() {
-  //   const newValue = !this.isOpenMenu.value;
-  //   this.isOpenMenu.next(newValue);
-  //   console.log('Menu toggle wurde aktiviert mit ' + newValue);
-  // }
+    console.log('is it checked ' + this.nonePriorityRadioButton.nativeElement.checked)
+  }
+
+
+
+
+
+  toggleSlideOverCreate(): void {
+ 
+    }
+
 }
