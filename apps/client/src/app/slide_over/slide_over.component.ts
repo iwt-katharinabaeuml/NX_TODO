@@ -62,9 +62,9 @@ export class SlideOverComponent {
   @ViewChild('creationDateYear', { static: true }) creationDateYear: any 
   @ViewChild('creationDateMonth', { static: true }) creationDateMonth: any 
   @ViewChild('creationDateDay', { static: true }) creationDateDay: any 
-  @ViewChild('deletionDateYear', { static: true }) deletionDateYear: any | undefined;
-  @ViewChild('deletionDateMonth', { static: true }) deletionDateMonth: any |undefined;
-  @ViewChild('deletionDateDay', { static: true }) deletionDateDay: any |undefined;
+  @ViewChild('completionDateYear', { static: true }) completionDateYear: any 
+  @ViewChild('completionDateMonth', { static: true }) completionDateMonth: any
+  @ViewChild('completionDateDay', { static: true }) completionDateDay: any 
 
   clearInputFields(): void {
  
@@ -72,9 +72,9 @@ export class SlideOverComponent {
     this.creationDateDay.nativeElement.value = null;
     this.creationDateMonth.nativeElement.value = null;
     this.creationDateYear.nativeElement.value = null;
-    this.deletionDateYear.nativeElement.value = null;
-    this.deletionDateMonth.nativeElement.value = null;
-    this.deletionDateDay.nativeElement.value = null;
+    this.completionDateYear.nativeElement.value = null;
+    this.completionDateMonth.nativeElement.value = null;
+    this.completionDateDay.nativeElement.value = null;
   }
 
   @ViewChild('nonePriorityRadioButton')
@@ -87,5 +87,5 @@ export class SlideOverComponent {
     );
   }
 
-  toggleSlideOverCreate(): void {}
+ 
 }
