@@ -61,6 +61,14 @@ export class TodosComponent implements OnInit {
       this.isOpen = isOpen$;
     });
   }
+
+
+  toggleSlideOverNewTask():void{
+    this.slideOverService.showAll(false)
+    console.log('in component.ts showAll' + this.showAllOptions$)
+  }
+
+
   toggleSlideOver(): void {
     this.slideOverService.toggle(); 
 

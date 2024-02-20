@@ -2,7 +2,6 @@ import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SlideOverService } from '../services/slide_over.service';
 
-
 @Component({
   selector: 'fse-slide-over',
   standalone: true,
@@ -42,40 +41,33 @@ export class SlideOverComponent {
         );
       }
     });
-
-
-
-
+    
   }
 
   isOpen$ = this.slideOverService.isOpen$;
 
-
-  showAllOption$ = this.slideOverService.showAllOptions$
-
-
+  showAllOptions$ = this.slideOverService.showAllOptions$;
+  
   toggleSlideOver(): void {
     this.slideOverService.toggle();
   }
-  active: boolean = true;
+  active: boolean = false;
 
   changeStatus(): void {
+
     this.active = !this.active;
   }
 
-  @ViewChild('descriptionInput', { static: true }) descriptionInput: any;
-  @ViewChild('creationDateYear', { static: true }) creationDateYear: any;
-  @ViewChild('creationDateMonth', { static: true }) creationDateMonth: any;
-  @ViewChild('creationDateDay', { static: true }) creationDateDay: any;
-  @ViewChild('deletionDateYear', { static: true }) deletionDateYear: any;
-  @ViewChild('deletionDateMonth', { static: true }) deletionDateMonth: any;
-  @ViewChild('deletionDateDay', { static: true }) deletionDateDay: any;
+  @ViewChild('descriptionInput', { static: true }) descriptionInput: any 
+  @ViewChild('creationDateYear', { static: true }) creationDateYear: any 
+  @ViewChild('creationDateMonth', { static: true }) creationDateMonth: any 
+  @ViewChild('creationDateDay', { static: true }) creationDateDay: any 
+  @ViewChild('deletionDateYear', { static: true }) deletionDateYear: any | undefined;
+  @ViewChild('deletionDateMonth', { static: true }) deletionDateMonth: any |undefined;
+  @ViewChild('deletionDateDay', { static: true }) deletionDateDay: any |undefined;
 
   clearInputFields(): void {
-    console.log(
-      'clearing the value',
-      this.descriptionInput.nativeElement.value
-    );
+ 
     this.descriptionInput.nativeElement.value = null;
     this.creationDateDay.nativeElement.value = null;
     this.creationDateMonth.nativeElement.value = null;
@@ -85,20 +77,15 @@ export class SlideOverComponent {
     this.deletionDateDay.nativeElement.value = null;
   }
 
-  @ViewChild('nonePriorityRadioButton') nonePriorityRadioButton!: ElementRef<HTMLInputElement>;
+  @ViewChild('nonePriorityRadioButton')
+  nonePriorityRadioButton!: ElementRef<HTMLInputElement>;
   clearPrioritySelection(): void {
     this.nonePriorityRadioButton.nativeElement.checked = true;
 
-
-    console.log('is it checked ' + this.nonePriorityRadioButton.nativeElement.checked)
+    console.log(
+      'is it checked ' + this.nonePriorityRadioButton.nativeElement.checked
+    );
   }
 
-
-
-
-
-  toggleSlideOverCreate(): void {
- 
-    }
-
+  toggleSlideOverCreate(): void {}
 }
