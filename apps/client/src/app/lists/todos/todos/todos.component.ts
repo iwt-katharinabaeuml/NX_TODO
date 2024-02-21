@@ -87,12 +87,12 @@ export class TodosComponent implements OnInit {
   isDotMenus: boolean[] = []
   @ViewChildren('dotMenu') dotMenus!: QueryList<ElementRef<any>>;
   
+  
   toggleDotMenu(index: number) {
-    // Umkehrung des Zustands für das spezifische Menü
-    this.isDotMenus[index] = !this.isDotMenus[index];
+    this.isDotMenus[index] = !this.isDotMenus[index]; // Umkehrung des Zustands für das spezifische Menü
 
     console.log('Menu toggle wurde aktiviert mit ' + this.isDotMenus[index]);
-
+    
     const dotMenu = this.dotMenus.toArray()[index];
     if (dotMenu) {
       if (this.isDotMenus[index]) {
