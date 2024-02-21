@@ -7,7 +7,7 @@ import { Task } from '../../shared/task.model';
 })
 export class TodosService {
   private tasks: Task[] = [
-    new Task('first Task', new Date(), new Date(), 'high', true),
+    new Task('first Task', '12-12-2025' as any, new Date(), 'high', true),
     new Task('second Task', new Date(), new Date(), 'high', true),
     new Task('third Task', new Date(), new Date(), 'medium', true),
     new Task('fourth Task', new Date(), new Date(), 'low', true),
