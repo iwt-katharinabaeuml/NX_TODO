@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   OnInit,
+  Output,
   QueryList,
   Renderer2,
   ViewChildren,
@@ -12,6 +13,8 @@ import { TodosService } from './todos.component.service';
 import { SlideOverService } from '../../../services/slide_over.service';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
+import { EventEmitter } from '@angular/core';
+import { TaskService } from '../../../services/task.service';
 
 
 @Component({
@@ -31,7 +34,8 @@ export class TodosComponent implements OnInit {
     private renderer: Renderer2,
     private tdService: TodosService,
     private slideOverService: SlideOverService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private taskService: TaskService
 
   ) {}
 
@@ -89,5 +93,20 @@ export class TodosComponent implements OnInit {
         this.renderer.addClass(dotMenu.nativeElement, 'hidden');
       }
     }
+  }
+
+  @Output() taskIdEmitter = new EventEmitter<number>();
+
+  // Methode, um die ID an das Elternkomponente zu senden
+  sendTaskId(taskId:any) {
+    console.log('in sendTaskID')
+    this.taskIdEmitter.emit(taskId);
+    console.log('this is the id' + taskId)
+  }
+
+
+
+  onClickOpenSlideOver(taskId: any) {
+    this.taskService.setTaskId(taskId);
   }
 }
