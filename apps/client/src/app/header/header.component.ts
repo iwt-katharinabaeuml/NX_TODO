@@ -4,11 +4,12 @@ import { TodosComponent } from '../lists/todos/todos/todos.component';
 import { DonesComponent } from '../lists/dones/dones.component';
 
 import { MenuSlideService } from '../services/slide_over.service';
+import { MenuIconComponent } from '../shared/menu.component';
 
 @Component({
   selector: 'fse-header',
   standalone: true,
-  imports: [CommonModule, TodosComponent, DonesComponent],
+  imports: [CommonModule, TodosComponent, DonesComponent, MenuIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   providers: [MenuSlideService],

@@ -58,13 +58,13 @@ export class SlideOverComponent {
     this.active = !this.active;
   }
 
-  @ViewChild('descriptionInput', { static: true }) descriptionInput: any 
-  @ViewChild('creationDateYear', { static: true }) creationDateYear: any 
-  @ViewChild('creationDateMonth', { static: true }) creationDateMonth: any 
-  @ViewChild('creationDateDay', { static: true }) creationDateDay: any 
-  @ViewChild('completionDateYear', { static: true }) completionDateYear: any 
-  @ViewChild('completionDateMonth', { static: true }) completionDateMonth: any
-  @ViewChild('completionDateDay', { static: true }) completionDateDay: any 
+  @ViewChild('descriptionInput', { static: true }) descriptionInput!: ElementRef
+  @ViewChild('creationDateYear', { static: true }) creationDateYear!: ElementRef 
+  @ViewChild('creationDateMonth', { static: true }) creationDateMonth!: ElementRef 
+  @ViewChild('creationDateDay', { static: true }) creationDateDay!: ElementRef 
+  @ViewChild('completionDateYear', { static: false }) completionDateYear!: ElementRef 
+  @ViewChild('completionDateMonth', { static: false }) completionDateMonth!: ElementRef
+  @ViewChild('completionDateDay', { static: false }) completionDateDay!: ElementRef 
 
   clearInputFields(): void {
  

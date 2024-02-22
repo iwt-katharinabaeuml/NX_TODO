@@ -28,7 +28,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 
-@Controller('tasks')
+@Controller('api/tasks')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 

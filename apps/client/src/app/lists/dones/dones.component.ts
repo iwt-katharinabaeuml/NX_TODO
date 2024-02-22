@@ -19,10 +19,10 @@ export class DonesComponent implements OnInit {
    constructor(private donesService: DonesService){}
   
    ngOnInit(): void {
-       this.tasks = this.donesService.getTasks(); 
-       this.donesService.tasksChanged.subscribe((tasks: Task[])=> {
-        this.tasks = tasks;
-       })
+      //  this.tasks = this.donesService.getTasks(); 
+      //  this.donesService.tasksChanged.subscribe((tasks: Task[])=> {
+      //   this.tasks = tasks;
+      //  })
    }
   } 
 

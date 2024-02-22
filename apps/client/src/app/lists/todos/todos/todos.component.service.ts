@@ -1,19 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Task } from '../../shared/task.model';
+import { ApiService } from '../../../services/api.service';
+import { TaskListDto } from '../../../services/api-interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodosService {
-  private tasks: Task[] = [
-    new Task('first Task', '12-12-2025' as any, new Date(), 'high', true),
-    new Task('second Task', new Date(), new Date(), 'high', true),
-    new Task('third Task', new Date(), new Date(), 'medium', true),
-    new Task('fourth Task', new Date(), new Date(), 'low', true),
-    new Task('fifth Task', new Date(), new Date(), 'none', true),
-    new Task('sixth Task', new Date(), new Date(), 'none', true),
-  ];
+  private tasks: Task[] = [];
+
+  constructor(private readonly apiService: ApiService) {
+    apiService.getData().subscribe((data: TaskListDto) => {
+      data.forEach((element) => {
+        this.tasks.push(element as Task);
+      });
+      this.tasksChanged.next(this.tasks);
+    });
+  }
 
   tasksChanged = new Subject<Task[]>();
   getTasks(): Task[] {

@@ -5,10 +5,11 @@
 >
   New Task
 </button>
-<ul role="list" class="divide-y divide-gray-100">
+<ul *ngIf="tasks" role="list" class="divide-y divide-gray-100">
   <li
     *ngFor="let task of tasks; let i = index"
     class="flex items-center justify-between gap-x-6 py-5"
+    id="{{ task.id }}"
   >
     <div class="min-w-0">
       <div class="flex items-start gap-x-3">
