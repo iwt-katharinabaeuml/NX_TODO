@@ -67,6 +67,8 @@
                       type="button"
                       class="relative text-gray-400 hover:text-gray-500"
                       (click)="toggleSlideOver()"
+                      (click)="clearPrioritySelection()"
+                      (click)="clearInputFields()"
                     >
                       <span class="absolute -inset-2.5"></span>
                       <span class="sr-only">Close panel</span>
@@ -350,6 +352,8 @@
               <div class="flex justify-end space-x-3">
                 <button
                   type="button"
+                  (click)="clearPrioritySelection()"
+                  (click)="clearInputFields()"
                   (click)="toggleSlideOver()"
                   class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                 >
