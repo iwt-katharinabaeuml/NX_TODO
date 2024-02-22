@@ -95,10 +95,9 @@ export class SlideOverComponent {
     this.completionDateDay.nativeElement.value = null;
   }
 
-
-completionDay:number = 0
-completionMonth:number = 0
-completionYear:number = 0
+  completionDay: number = 0;
+  completionMonth: number = 0;
+  completionYear: number = 0;
 
   task: TaskDto = {
     id: '',
@@ -110,8 +109,6 @@ completionYear:number = 0
   };
   setInputFields(id: any): void {
     this.apiService.getDataById(id).subscribe((data: TaskDto) => {
-      console.log(data);
-      console.log('this is the id in setInputFields: ' + id);
       this.task.id = data.id;
       this.task.description = data.description;
       this.task.creationDate = data.creationDate;
@@ -119,9 +116,8 @@ completionYear:number = 0
       this.task.completed = data.completed;
       this.task.priority = data.priority;
 
-      console.log(this.task.creationDate)
-      this.transformCreationDate(this.task.creationDate)
-      this.transformCompletionDate(this.task.completionDate)
+      this.transformCreationDate(this.task.creationDate);
+      this.transformCompletionDate(this.task.completionDate);
 
       this.descriptionInput.nativeElement.value = this.task.description;
       if (this.task.completed === true) {
@@ -129,7 +125,7 @@ completionYear:number = 0
       } else {
         this.active = false;
       }
-      console.log(this.task.priority);
+
       if (this.task.priority === 'high') {
         this.highPriorityRadioButton.nativeElement.checked = true;
         this.mediumPriorityRadioButton.nativeElement.checked = false;
@@ -158,44 +154,33 @@ completionYear:number = 0
 
   clearPrioritySelection(): void {
     this.nonePriorityRadioButton.nativeElement.checked = true;
-
-    console.log(
-      'is it checked ' + this.nonePriorityRadioButton.nativeElement.checked
-    );
   }
 
   ngOnInit() {
     this.taskService.taskId$.subscribe((taskId) => {
       this.taskId = taskId;
-      console.log('Id ist angekommen' + this.taskId);
-      // Hier können Sie die taskId verwenden, sobald sie aktualisiert wird
       this.setInputFields(this.taskId);
     });
   }
 
-
-
- transformCreationDate(dateString:any) {
+  transformCreationDate(dateString: any) {
     const date = new Date(dateString);
     const YYYY = date.getFullYear();
     const MM = date.getMonth() + 1; // Monate sind nullbasiert, daher +1
     const DD = date.getDate();
-    console.log(DD)
+
     this.creationDateYear.nativeElement.value = YYYY;
     this.creationDateMonth.nativeElement.value = MM;
     this.creationDateDay.nativeElement.value = DD;
   }
-  transformCompletionDate(dateString:any) {
+  transformCompletionDate(dateString: any) {
     const date = new Date(dateString);
     const YYYY = date.getFullYear();
     const MM = date.getMonth() + 1; // Monate sind nullbasiert, daher +1
     const DD = date.getDate();
-    console.log(DD)
+
     this.completionDateYear.nativeElement.value = YYYY;
     this.completionDateMonth.nativeElement.value = MM;
     this.completionDateDay.nativeElement.value = DD;
   }
-
-
-
 }
