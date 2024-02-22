@@ -1,15 +1,9 @@
-import {
-  Component,
-  ElementRef,
-  Input,
-  Renderer2,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SlideOverService } from '../services/slide_over.service';
 import { ApiService } from '../services/api.service';
 import { Priority, TaskDto } from '../services/api-interfaces';
-import { Task } from '../lists/shared/task.model';
+
 import { TaskService } from '../services/task.service';
 
 @Component({
@@ -101,6 +95,11 @@ export class SlideOverComponent {
     this.completionDateDay.nativeElement.value = null;
   }
 
+
+completionDay:number = 0
+completionMonth:number = 0
+completionYear:number = 0
+
   task: TaskDto = {
     id: '',
     description: '',
@@ -120,34 +119,38 @@ export class SlideOverComponent {
       this.task.completed = data.completed;
       this.task.priority = data.priority;
 
+      console.log(this.task.creationDate)
+      this.transformCreationDate(this.task.creationDate)
+      this.transformCompletionDate(this.task.completionDate)
+
       this.descriptionInput.nativeElement.value = this.task.description;
       if (this.task.completed === true) {
         this.active = true;
       } else {
         this.active = false;
       }
-console.log(this.task.priority)
-if (this.task.priority === 'high') {
-  this.highPriorityRadioButton.nativeElement.checked = true;
-  this.mediumPriorityRadioButton.nativeElement.checked = false;
-  this.lowPriorityRadioButton.nativeElement.checked = false;
-  this.nonePriorityRadioButton.nativeElement.checked = false;
-} else if (this.task.priority === 'medium') {
-  this.highPriorityRadioButton.nativeElement.checked = false;
-  this.mediumPriorityRadioButton.nativeElement.checked = true;
-  this.lowPriorityRadioButton.nativeElement.checked = false;
-  this.nonePriorityRadioButton.nativeElement.checked = false;
-} else if (this.task.priority === 'low') {
-  this.highPriorityRadioButton.nativeElement.checked = false;
-  this.mediumPriorityRadioButton.nativeElement.checked = false;
-  this.lowPriorityRadioButton.nativeElement.checked = true;
-  this.nonePriorityRadioButton.nativeElement.checked = false;
-} else if (this.task.priority === 'none') {
-  this.highPriorityRadioButton.nativeElement.checked = false;
-  this.mediumPriorityRadioButton.nativeElement.checked = false;
-  this.lowPriorityRadioButton.nativeElement.checked = false;
-  this.nonePriorityRadioButton.nativeElement.checked = true;
-}
+      console.log(this.task.priority);
+      if (this.task.priority === 'high') {
+        this.highPriorityRadioButton.nativeElement.checked = true;
+        this.mediumPriorityRadioButton.nativeElement.checked = false;
+        this.lowPriorityRadioButton.nativeElement.checked = false;
+        this.nonePriorityRadioButton.nativeElement.checked = false;
+      } else if (this.task.priority === 'medium') {
+        this.highPriorityRadioButton.nativeElement.checked = false;
+        this.mediumPriorityRadioButton.nativeElement.checked = true;
+        this.lowPriorityRadioButton.nativeElement.checked = false;
+        this.nonePriorityRadioButton.nativeElement.checked = false;
+      } else if (this.task.priority === 'low') {
+        this.highPriorityRadioButton.nativeElement.checked = false;
+        this.mediumPriorityRadioButton.nativeElement.checked = false;
+        this.lowPriorityRadioButton.nativeElement.checked = true;
+        this.nonePriorityRadioButton.nativeElement.checked = false;
+      } else if (this.task.priority === 'none') {
+        this.highPriorityRadioButton.nativeElement.checked = false;
+        this.mediumPriorityRadioButton.nativeElement.checked = false;
+        this.lowPriorityRadioButton.nativeElement.checked = false;
+        this.nonePriorityRadioButton.nativeElement.checked = true;
+      }
     });
   }
 
@@ -169,4 +172,30 @@ if (this.task.priority === 'high') {
       this.setInputFields(this.taskId);
     });
   }
+
+
+
+ transformCreationDate(dateString:any) {
+    const date = new Date(dateString);
+    const YYYY = date.getFullYear();
+    const MM = date.getMonth() + 1; // Monate sind nullbasiert, daher +1
+    const DD = date.getDate();
+    console.log(DD)
+    this.creationDateYear.nativeElement.value = YYYY;
+    this.creationDateMonth.nativeElement.value = MM;
+    this.creationDateDay.nativeElement.value = DD;
+  }
+  transformCompletionDate(dateString:any) {
+    const date = new Date(dateString);
+    const YYYY = date.getFullYear();
+    const MM = date.getMonth() + 1; // Monate sind nullbasiert, daher +1
+    const DD = date.getDate();
+    console.log(DD)
+    this.completionDateYear.nativeElement.value = YYYY;
+    this.completionDateMonth.nativeElement.value = MM;
+    this.completionDateDay.nativeElement.value = DD;
+  }
+
+
+
 }
