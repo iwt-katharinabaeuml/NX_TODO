@@ -173,16 +173,21 @@ export class SlideOverComponent {
     this.creationDateDay.nativeElement.value = DD;
   }
   transformCompletionDate(dateString: any) {
-    const date = new Date(dateString);
-    const YYYY = date.getFullYear();
-    const MM = date.getMonth() + 1; // Monate sind nullbasiert, daher +1
-    const DD = date.getDate();
-
-    this.completionDateYear.nativeElement.value = YYYY;
-    this.completionDateMonth.nativeElement.value = MM;
-    this.completionDateDay.nativeElement.value = DD;
+    let date = new Date(dateString);
+    let YYYY = date.getFullYear();
+    let MM = date.getMonth() + 1; // Monate sind nullbasiert, daher +1
+    let DD = date.getDate();
+  
+    if (isNaN(YYYY) || isNaN(MM) || isNaN(DD)) {
+      this.completionDateYear.nativeElement.value = '';
+      this.completionDateMonth.nativeElement.value = '';
+      this.completionDateDay.nativeElement.value = '';
+    } else {
+      this.completionDateYear.nativeElement.value = YYYY;
+      this.completionDateMonth.nativeElement.value = MM;
+      this.completionDateDay.nativeElement.value = DD;
+    }
   }
-
 
   slideFields$ = this.slideOverService.slideFields$;
 }
