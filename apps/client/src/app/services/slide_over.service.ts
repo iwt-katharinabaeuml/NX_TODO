@@ -23,7 +23,9 @@ export class SlideOverService {
     console.log(newValue);
   }
 
-  private slideFields: any = {};
+  private slideFields: any = {
+    
+  };
   private slideFieldsSubject = new BehaviorSubject<any>(this.slideFields); 
   slideFields$: Observable<any> = this.slideFieldsSubject.asObservable();
 

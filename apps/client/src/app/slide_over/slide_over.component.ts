@@ -184,17 +184,5 @@ export class SlideOverComponent {
   }
 
 
-
-
-  // @ViewChild('headerTitle', { static: false })
-  // headerTitle!: ElementRef;
-
-
   slideFields$ = this.slideOverService.slideFields$;
- //console.log(slideFields$)
-
-
-
-
-
 }
