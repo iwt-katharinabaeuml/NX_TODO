@@ -105,8 +105,25 @@ export class TodosComponent implements OnInit {
   }
 
 
-
   onClickOpenSlideOver(taskId: any) {
     this.taskService.setTaskId(taskId);
+  }
+
+  NewTaskSliderTextElements = {
+    header: 'New Task',
+    description: 'Get started by filling in the information below to create a new task', 
+    button: 'Create'
+  };
+
+  EditTaskSliderTextElements = {
+    header: 'Edit Task', 
+    description: 'Correct the data and use the "Update"-Button for updating the task',
+    button: 'Update'
+  };
+
+
+
+  setHeaderFields(header: string, description: string, button: string): void {
+    this.slideOverService.setSliderHeader(header, description, button);
   }
 }

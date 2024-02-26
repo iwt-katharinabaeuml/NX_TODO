@@ -23,6 +23,7 @@ export class HeaderComponent implements AfterViewInit {
   constructor(
     private menuSlideService: MenuSlideService,
     private renderer: Renderer2
+    
   ) {}
   menuOpen$ = this.menuSlideService.menuOpen$;
   
@@ -56,8 +57,10 @@ export class HeaderComponent implements AfterViewInit {
 
   EditTaskSliderTextElements = {
     header: 'Edit Task', 
-    description: 'Correct the data and use the "Update"-Button for updating the task', 
+    description: 'Correct the data and use the "Update"-Button for updating the task',
     button:'Update'
+
+
   }
 
 

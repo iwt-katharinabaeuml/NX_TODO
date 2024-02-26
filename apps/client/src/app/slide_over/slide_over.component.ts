@@ -151,7 +151,6 @@ export class SlideOverComponent {
   }
 
   taskId: any;
-
   clearPrioritySelection(): void {
     this.nonePriorityRadioButton.nativeElement.checked = true;
   }
@@ -183,4 +182,19 @@ export class SlideOverComponent {
     this.completionDateMonth.nativeElement.value = MM;
     this.completionDateDay.nativeElement.value = DD;
   }
+
+
+
+
+  // @ViewChild('headerTitle', { static: false })
+  // headerTitle!: ElementRef;
+
+
+  slideFields$ = this.slideOverService.slideFields$;
+ //console.log(slideFields$)
+
+
+
+
+
 }

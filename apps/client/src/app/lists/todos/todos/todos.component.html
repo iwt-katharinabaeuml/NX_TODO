@@ -1,6 +1,13 @@
 <button
   (click)="toggleSlideOverNewTask()"
   (click)="toggleSlideOver()"
+  (click)="
+    setHeaderFields(
+      NewTaskSliderTextElements.header,
+      NewTaskSliderTextElements.description,
+      NewTaskSliderTextElements.button
+    )
+  "
   class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow z-50"
 >
   New Task
@@ -100,6 +107,13 @@
             id="options-menu-0-item-0"
             (click)="toggleSlideOverCreate()"
             (click)="toggleSlideOver()"
+            (click)="
+              setHeaderFields(
+                EditTaskSliderTextElements.header,
+                EditTaskSliderTextElements.description,
+                EditTaskSliderTextElements.button
+              )
+            "
             >Edit<span class="sr-only">, GraphQL API</span></a
           >
 

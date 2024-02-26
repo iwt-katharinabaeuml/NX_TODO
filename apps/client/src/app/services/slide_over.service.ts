@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +22,22 @@ export class SlideOverService {
     this.showAllOptions.next(newValue);
     console.log(newValue);
   }
+
+  private slideFields: any = {};
+  private slideFieldsSubject = new BehaviorSubject<any>(this.slideFields); 
+  slideFields$: Observable<any> = this.slideFieldsSubject.asObservable();
+
+  setSliderHeader(header: string, description: string, button: string): void {
+    const slideFields = {
+      slideHeader: header,
+      slideDescription: description,
+      slideButton: button
+    };
+    this.slideFields = slideFields;
+    this.slideFieldsSubject.next(slideFields);
+    console.log('slideFields im Server', slideFields);
+  }
+
 }
 
 @Injectable({
