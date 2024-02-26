@@ -48,4 +48,21 @@ export class HeaderComponent implements AfterViewInit {
     this.menuSlideService.toggle();
   }
 
+  NewTaskSliderTextElements = {
+    header: 'New Task',
+    description: 'Get started by filling in the information below to create a new task', 
+    button:'Create'
+  }
+
+  EditTaskSliderTextElements = {
+    header: 'Edit Task', 
+    description: 'Correct the data and use the "Update"-Button for updating the task', 
+    button:'Update'
+  }
+
+
+
+
+
+
 }
