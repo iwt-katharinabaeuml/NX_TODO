@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-
+import { Task } from '../lists/shared/task.model';
+import { CreateTaskDto, UpdateTaskDto } from './api-interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -12,26 +12,26 @@ export class ApiService {
   apiUrl = '/api/tasks';
 
   getData() {
-    console.log('von der API' + this.http.get<any>(this.apiUrl));
     return this.http.get<any>(this.apiUrl);
   }
 
   getDataById(id: any) {
-    console.log('über Id von API' + this.http.get<any>(this.apiUrl + '/' + id));
-    console.log(this.apiUrl + '/' + id);
     return this.http.get<any>(this.apiUrl + '/' + id);
   }
 
   deleteDataById(id: any) {
-    console.log('this will be deleted' + this.apiUrl + '/' + id);
-    return this.http.delete<any>(this.apiUrl + '/' + id).subscribe(
-      (response) => {
-        console.log('task deleted', response);
-        // Führe hier weitere Aktionen nach dem Löschen aus, falls erforderlich
-      
-      },
-      (error) => {
-        console.error('deletion failed', error);
-      }
-    );
-}}
+    return this.http.delete<any>(this.apiUrl + '/' + id);
+  }
+
+  updateDateById(id:any, task:UpdateTaskDto){
+    console.log(id)
+    console.log(task)
+    this.http.put<any>(this.apiUrl + '/' + id, task);
+    console.log('im API Server' + (this.apiUrl + '/' + id, task))
+    return this.http.put<any>(this.apiUrl + '/' + id, task);
+  }
+
+  createTask(task:CreateTaskDto){
+    return this.http.post<any>(this.apiUrl, task);
+  }
+}

@@ -2,10 +2,11 @@ import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SlideOverService } from '../services/slide_over.service';
 import { ApiService } from '../services/api.service';
-import { Priority, TaskDto } from '../services/api-interfaces';
+import { Priority, TaskDto, UpdateTaskDto } from '../services/api-interfaces';
 
 import { TaskService } from '../services/task.service';
 import { TodosService } from '../lists/todos/todos/todos.component.service';
+import { Task } from '../lists/shared/task.model';
 
 @Component({
   selector: 'fse-slide-over',
@@ -22,7 +23,7 @@ export class SlideOverComponent {
     private slideOverService: SlideOverService,
     private renderer: Renderer2,
     private apiService: ApiService,
-    private taskService: TaskService, 
+    private taskService: TaskService,
     private todosService: TodosService
   ) {
     this.isOpen$.subscribe((isOpen) => {
@@ -179,7 +180,7 @@ export class SlideOverComponent {
     let YYYY = date.getFullYear();
     let MM = date.getMonth() + 1; // Monate sind nullbasiert, daher +1
     let DD = date.getDate();
-  
+
     if (isNaN(YYYY) || isNaN(MM) || isNaN(DD)) {
       this.completionDateYear.nativeElement.value = '';
       this.completionDateMonth.nativeElement.value = '';
@@ -193,6 +194,80 @@ export class SlideOverComponent {
 
   slideFields$ = this.slideOverService.slideFields$;
 
-  
-  
+  updatedTaskBody: UpdateTaskDto = {
+    description: '',
+    creationDate: new Date(),
+    completionDate: new Date(),
+    priority: Priority.none,
+    completed: false,
+  };
+
+  updateTask() {
+    let priority = Priority.none;
+    let completed = false;
+
+    if (this.highPriorityRadioButton.nativeElement.checked) {
+      priority = Priority.high;
+    } else if (this.mediumPriorityRadioButton.nativeElement.checked) {
+      priority = Priority.medium;
+    } else if (this.lowPriorityRadioButton.nativeElement.checked) {
+      priority = Priority.low;
+    }
+
+    completed = this.active;
+
+    const updatedTaskBody: UpdateTaskDto = {
+      description: this.descriptionInput.nativeElement.value,
+      creationDate: this.createDateFromValues(
+        this.creationDateYear.nativeElement.value,
+        this.creationDateMonth.nativeElement.value,
+        this.creationDateDay.nativeElement.value
+      ) as any,
+      completionDate: this.createDateFromValues(
+        this.completionDateYear.nativeElement.value,
+        this.completionDateMonth.nativeElement.value,
+        this.completionDateDay.nativeElement.value
+      ) as any,
+      priority: priority,
+      completed: completed,
+    };
+
+    console.log('das ist der neue aktualisierte Task', updatedTaskBody);
+
+    this.apiService.updateDateById(this.taskId, updatedTaskBody).subscribe(
+      (response) => {
+        console.log('Task erfolgreich aktualisiert', response);
+        // Hier könntest du zusätzliche Logik ausführen oder den Benutzer benachrichtigen
+      },
+      (error) => {
+        console.error('Fehler beim Aktualisieren des Tasks', error);
+        // Hier könntest du Fehlerbehandlung durchführen, z.B. eine Fehlermeldung anzeigen
+      }
+    );
+  }
+
+  createDateFromValues(
+    year: number,
+    month: number,
+    day: number
+  ): string | null {
+    if (isNaN(year) || isNaN(month) || isNaN(day)) {
+      return null;
+    }
+
+    const dateString = `${year}-${month.toString().padStart(2, '0')}-${day
+      .toString()
+      .padStart(2, '0')}`;
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return null;
+    }
+
+    const isoString = `${date.toISOString().slice(0, 19)}.${date
+      .getUTCMilliseconds()
+      .toString()
+      .padStart(3, '0')}Z`;
+    return isoString;
+  }
 }

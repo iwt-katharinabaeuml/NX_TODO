@@ -16,9 +16,17 @@ export enum Priority {
 
 export type TaskListDto = TaskDto[];
 
-export interface CreateTasDto {
+export interface CreateTaskDto {
   description: string;
   creationDate: Date;
+  priority: Priority;
+  completed: boolean;
+}
+
+export interface UpdateTaskDto {
+  description: string;
+  creationDate: Date;
+  completionDate: Date;
   priority: Priority;
   completed: boolean;
 }
