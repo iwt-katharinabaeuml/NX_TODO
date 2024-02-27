@@ -62,7 +62,6 @@ export class TodosComponent implements OnInit {
 
   toggleSlideOverNewTask(): void {
     this.slideOverService.showAll(false);
-    console.log('in component.ts showAll' + this.showAllOptions$);
   }
 
   toggleSlideOver(): void {
@@ -71,7 +70,6 @@ export class TodosComponent implements OnInit {
 
   toggleSlideOverCreate(): void {
     this.slideOverService.showAll(true);
-    console.log('in component.ts showAll' + this.showAllOptions$);
   }
 
   showAllOptions$ = this.slideOverService.showAllOptions$;
@@ -81,8 +79,6 @@ export class TodosComponent implements OnInit {
 
   toggleDotMenu(index: number) {
     this.isDotMenus[index] = !this.isDotMenus[index];
-
-    console.log('Menu toggle wurde aktiviert mit ' + this.isDotMenus[index]);
 
     const dotMenu = this.dotMenus.toArray()[index];
     if (dotMenu) {
@@ -98,18 +94,14 @@ export class TodosComponent implements OnInit {
     this.taskService.setTaskId(taskId);
   }
 
-
-
   deleteTask(id: any) {
     const element = document.getElementById(id);
-    console.log('this is the element' + element);
+
     if (element) {
       this.renderer.addClass(element, 'hidden');
     }
-    this.apiService.deleteDataById(id)
+    this.apiService.deleteDataById(id);
   }
-
-
 
   NewTaskSliderTextElements = {
     header: 'New Task',
