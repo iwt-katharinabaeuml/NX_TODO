@@ -1,3 +1,9 @@
+
+
+
+
+
+
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Task } from '../../shared/task.model';
@@ -8,7 +14,7 @@ import { TaskListDto } from '../../../services/api-interfaces';
   providedIn: 'root',
 })
 export class TodosService {
-  private tasks: Task[] = [];
+  private tasks: Task[] = []; // Oberservabl machen?
 
   constructor(private readonly apiService: ApiService) {
     apiService.getData().subscribe((data: TaskListDto) => {
@@ -19,8 +25,8 @@ export class TodosService {
     });
   }
 
-
   tasksChanged = new Subject<Task[]>();
+
   getTasks(): Task[] {
     return this.tasks.slice();
   }
@@ -29,3 +35,4 @@ export class TodosService {
     this.tasksChanged.next(this.getTasks());
   }
 }
+

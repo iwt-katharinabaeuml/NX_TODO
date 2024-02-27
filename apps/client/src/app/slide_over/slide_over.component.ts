@@ -5,6 +5,7 @@ import { ApiService } from '../services/api.service';
 import { Priority, TaskDto } from '../services/api-interfaces';
 
 import { TaskService } from '../services/task.service';
+import { TodosService } from '../lists/todos/todos/todos.component.service';
 
 @Component({
   selector: 'fse-slide-over',
@@ -21,7 +22,8 @@ export class SlideOverComponent {
     private slideOverService: SlideOverService,
     private renderer: Renderer2,
     private apiService: ApiService,
-    private taskService: TaskService
+    private taskService: TaskService, 
+    private todosService: TodosService
   ) {
     this.isOpen$.subscribe((isOpen) => {
       if (this.panel === undefined) return;
@@ -190,4 +192,7 @@ export class SlideOverComponent {
   }
 
   slideFields$ = this.slideOverService.slideFields$;
+
+  
+  
 }

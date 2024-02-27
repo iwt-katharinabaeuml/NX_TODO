@@ -13,9 +13,7 @@ import { TodosService } from './todos.component.service';
 import { SlideOverService } from '../../../services/slide_over.service';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
-import { EventEmitter } from '@angular/core';
 import { TaskService } from '../../../services/task.service';
-
 
 @Component({
   selector: 'fse-todos',
@@ -24,7 +22,6 @@ import { TaskService } from '../../../services/task.service';
   templateUrl: './todos.component.html',
   styleUrl: './todos.component.scss',
 })
-
 export class TodosComponent implements OnInit {
   tasks!: Task[];
   isOpen = false;
@@ -36,18 +33,22 @@ export class TodosComponent implements OnInit {
     private slideOverService: SlideOverService,
     private apiService: ApiService,
     private taskService: TaskService
-
   ) {}
 
   ngOnInit(): void {
+    this.loadTasks();
+
+    this.slideOverService.isOpen$.subscribe((isOpen$) => {
+      this.isOpen = isOpen$;
+    });
+  }
+
+  loadTasks(): void {
     this.tasks = this.tdService.getTasks();
     this.tdService.tasksChanged.subscribe((tasks: Task[]) => {
       this.tasks = tasks;
     });
 
-    this.slideOverService.isOpen$.subscribe((isOpen$) => {
-      this.isOpen = isOpen$;
-    });
     this.apiService.getData().subscribe(
       (data) => {
         this.responseData = data;
@@ -64,9 +65,7 @@ export class TodosComponent implements OnInit {
     console.log('in component.ts showAll' + this.showAllOptions$);
   }
 
-  toggleSlideOver(): void { 
-   
-
+  toggleSlideOver(): void {
     this.slideOverService.toggle();
   }
 
@@ -95,33 +94,36 @@ export class TodosComponent implements OnInit {
     }
   }
 
-  @Output() taskIdEmitter = new EventEmitter<number>();
-
-  // Methode, um die ID an das Elternkomponente zu senden
-  sendTaskId(taskId:any) {
-    console.log('in sendTaskID')
-    this.taskIdEmitter.emit(taskId);
-    console.log('this is the id' + taskId)
-  }
-
-
   onClickOpenSlideOver(taskId: any) {
     this.taskService.setTaskId(taskId);
   }
 
+
+
+  deleteTask(id: any) {
+    const element = document.getElementById(id);
+    console.log('this is the element' + element);
+    if (element) {
+      this.renderer.addClass(element, 'hidden');
+    }
+    this.apiService.deleteDataById(id)
+  }
+
+
+
   NewTaskSliderTextElements = {
     header: 'New Task',
-    description: 'Get started by filling in the information below to create a new task', 
-    button: 'Create'
+    description:
+      'Get started by filling in the information below to create a new task',
+    button: 'Create',
   };
 
   EditTaskSliderTextElements = {
-    header: 'Edit Task', 
-    description: 'Correct the data and use the "Update"-Button for updating the task',
-    button: 'Update'
+    header: 'Edit Task',
+    description:
+      'Correct the data and use the "Update"-Button for updating the task',
+    button: 'Update',
   };
-
-
 
   setHeaderFields(header: string, description: string, button: string): void {
     this.slideOverService.setSliderHeader(header, description, button);
