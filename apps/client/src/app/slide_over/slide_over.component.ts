@@ -276,4 +276,44 @@ export class SlideOverComponent {
   updateTasks(): void {
     this.todosService.fetchTasks();
   }
+
+  createNewTask(){
+    console.log('in der createNewTask() Funktion')
+    let priority = Priority.none;
+    let completed = false;
+
+    if (this.highPriorityRadioButton.nativeElement.checked) {
+      priority = Priority.high;
+    } else if (this.mediumPriorityRadioButton.nativeElement.checked) {
+      priority = Priority.medium;
+    } else if (this.lowPriorityRadioButton.nativeElement.checked) {
+      priority = Priority.low;
+    }
+
+    const newTaskBody: UpdateTaskDto = {
+      description: this.descriptionInput.nativeElement.value,
+      creationDate: this.createDateFromValues(
+        this.creationDateYear.nativeElement.value,
+        this.creationDateMonth.nativeElement.value,
+        this.creationDateDay.nativeElement.value
+      ) as any,
+      completionDate: null as any,
+      priority: priority,
+      completed: completed,
+    };
+
+    console.log('New Task', newTaskBody);
+
+    this.apiService.createTask(newTaskBody).subscribe(
+      (response) => {
+        console.log('Task erfolgreich erstellt', response);
+      
+      },
+      (error) => {
+        console.error('Fehler beim Erstellen des Tasks', error);
+
+      }
+    );
+    this.updateTasks()
+  }
 }
