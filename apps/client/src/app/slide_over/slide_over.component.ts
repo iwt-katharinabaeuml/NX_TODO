@@ -88,9 +88,9 @@ export class SlideOverComponent {
 
   clearInputFields(): void {
     this.descriptionInput.nativeElement.value = null;
-    this.creationDateDay.nativeElement.value = null;
-    this.creationDateMonth.nativeElement.value = null;
-    this.creationDateYear.nativeElement.value = null;
+    this.creationDateDay.nativeElement.value = this.currentDate.day
+    this.creationDateMonth.nativeElement.value = this.currentDate.month
+    this.creationDateYear.nativeElement.value = this.currentDate.year
     this.completionDateYear.nativeElement.value = null;
     this.completionDateMonth.nativeElement.value = null;
     this.completionDateDay.nativeElement.value = null;
@@ -310,4 +310,12 @@ export class SlideOverComponent {
   deleteTask(id: any) {
     this.taskService.deleteTask(id);
   }
+
+
+  currentDate ={
+    year: new Date().getFullYear().toString(),
+    month: (new Date().getMonth() + 1).toString().padStart(2, '0') ,
+    day: new Date().getDate().toString().padStart(2, '0')   
+  }
+
 }
