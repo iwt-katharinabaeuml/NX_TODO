@@ -58,6 +58,7 @@ export class SlideOverComponent {
 
   toggleSlideOver(): void {
     this.slideOverService.toggle();
+    this.updateTasks()
   }
   active: boolean = false;
 
@@ -237,13 +238,14 @@ export class SlideOverComponent {
     this.apiService.updateDateById(this.taskId, updatedTaskBody).subscribe(
       (response) => {
         console.log('Task erfolgreich aktualisiert', response);
-        // Hier könntest du zusätzliche Logik ausführen oder den Benutzer benachrichtigen
+      
       },
       (error) => {
         console.error('Fehler beim Aktualisieren des Tasks', error);
-        // Hier könntest du Fehlerbehandlung durchführen, z.B. eine Fehlermeldung anzeigen
+
       }
     );
+    this.updateTasks()
   }
 
   createDateFromValues(
@@ -269,5 +271,9 @@ export class SlideOverComponent {
       .toString()
       .padStart(3, '0')}Z`;
     return isoString;
+  }
+
+  updateTasks(): void {
+    this.todosService.fetchTasks();
   }
 }

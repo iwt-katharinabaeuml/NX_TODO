@@ -20,6 +20,8 @@ export class ApiService {
   }
 
   deleteDataById(id: any) {
+    console.log(this.apiUrl + '/' + id);
+    console.log('Id im Api Delete Service' + id)
     return this.http.delete<any>(this.apiUrl + '/' + id);
   }
 

@@ -20,10 +20,10 @@ import { TaskService } from '../../../services/task.service';
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink],
   templateUrl: './todos.component.html',
-  styleUrl: './todos.component.scss',
+  styleUrls: ['./todos.component.scss'],
 })
 export class TodosComponent implements OnInit {
-  tasks!: Task[];
+  tasks: Task[] = [];
   isOpen = false;
   responseData: any;
 
@@ -98,9 +98,15 @@ export class TodosComponent implements OnInit {
     const element = document.getElementById(id);
 
     if (element) {
-      this.renderer.addClass(element, 'hidden');
+      this.apiService.deleteDataById(id).subscribe(
+        () => {
+          this.tdService.fetchTasks(); /// hier updateTasks() anstatt hidden
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     }
-    this.apiService.deleteDataById(id);
   }
 
   NewTaskSliderTextElements = {
@@ -120,4 +126,6 @@ export class TodosComponent implements OnInit {
   setHeaderFields(header: string, description: string, button: string): void {
     this.slideOverService.setSliderHeader(header, description, button);
   }
+
+  createNewTask() {}
 }
