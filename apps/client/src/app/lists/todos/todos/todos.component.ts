@@ -29,7 +29,6 @@ export class TodosComponent implements OnInit {
 
   constructor(
     private renderer: Renderer2,
-    private tdService: TodosService,
     private slideOverService: SlideOverService,
     private apiService: ApiService,
     private taskService: TaskService
@@ -44,8 +43,8 @@ export class TodosComponent implements OnInit {
   }
 
   loadTasks(): void {
-    this.tasks = this.tdService.getTasks();
-    this.tdService.tasksChanged.subscribe((tasks: Task[]) => {
+    this.tasks = this.taskService.getTasks();
+    this.taskService.tasksChanged.subscribe((tasks: Task[]) => {
       this.tasks = tasks;
     });
 
@@ -95,18 +94,7 @@ export class TodosComponent implements OnInit {
   }
 
   deleteTask(id: any) {
-    const element = document.getElementById(id);
-
-    if (element) {
-      this.apiService.deleteDataById(id).subscribe(
-        () => {
-          this.tdService.fetchTasks(); /// hier updateTasks() anstatt hidden
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    }
+    this.taskService.deleteTask(id);
   }
 
   NewTaskSliderTextElements = {

@@ -3,10 +3,8 @@ import { CommonModule } from '@angular/common';
 import { SlideOverService } from '../services/slide_over.service';
 import { ApiService } from '../services/api.service';
 import { Priority, TaskDto, UpdateTaskDto } from '../services/api-interfaces';
-
 import { TaskService } from '../services/task.service';
-import { TodosService } from '../lists/todos/todos/todos.component.service';
-import { Task } from '../lists/shared/task.model';
+
 
 @Component({
   selector: 'fse-slide-over',
@@ -24,7 +22,6 @@ export class SlideOverComponent {
     private renderer: Renderer2,
     private apiService: ApiService,
     private taskService: TaskService,
-    private todosService: TodosService
   ) {
     this.isOpen$.subscribe((isOpen) => {
       if (this.panel === undefined) return;
@@ -58,7 +55,7 @@ export class SlideOverComponent {
 
   toggleSlideOver(): void {
     this.slideOverService.toggle();
-    this.updateTasks()
+    this.taskService.fetchTasks();
   }
   active: boolean = false;
 
@@ -238,14 +235,13 @@ export class SlideOverComponent {
     this.apiService.updateDateById(this.taskId, updatedTaskBody).subscribe(
       (response) => {
         console.log('Task erfolgreich aktualisiert', response);
-      
       },
       (error) => {
         console.error('Fehler beim Aktualisieren des Tasks', error);
-
       }
     );
-    this.updateTasks()
+    this.taskService.fetchTasks();
+    this.clearInputFields()
   }
 
   createDateFromValues(
@@ -273,12 +269,8 @@ export class SlideOverComponent {
     return isoString;
   }
 
-  updateTasks(): void {
-    this.todosService.fetchTasks();
-  }
-
-  createNewTask(){
-    console.log('in der createNewTask() Funktion')
+  createNewTask() {
+    console.log('in der createNewTask() Funktion');
     let priority = Priority.none;
     let completed = false;
 
@@ -307,13 +299,11 @@ export class SlideOverComponent {
     this.apiService.createTask(newTaskBody).subscribe(
       (response) => {
         console.log('Task erfolgreich erstellt', response);
-      
       },
       (error) => {
         console.error('Fehler beim Erstellen des Tasks', error);
-
       }
     );
-    this.updateTasks()
+    this.taskService.fetchTasks();
   }
 }
