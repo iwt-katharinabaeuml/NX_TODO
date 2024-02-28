@@ -305,5 +305,9 @@ export class SlideOverComponent {
       }
     );
     this.taskService.fetchTasks();
+    this.clearInputFields()
+  }
+  deleteTask(id: any) {
+    this.taskService.deleteTask(id);
   }
 }
