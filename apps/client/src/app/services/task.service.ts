@@ -41,7 +41,6 @@ export class TaskService {
   }
 
   deleteTask(id: any) {
-  console.log('this id should be deltete during the next steps: ' + id)
       this.apiService.deleteDataById(id).subscribe(
         () => {
           this.fetchTasks();
