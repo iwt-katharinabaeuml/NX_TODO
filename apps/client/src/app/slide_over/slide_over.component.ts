@@ -5,7 +5,6 @@ import { ApiService } from '../services/api.service';
 import { Priority, TaskDto, UpdateTaskDto } from '../services/api-interfaces';
 import { TaskService } from '../services/task.service';
 
-
 @Component({
   selector: 'fse-slide-over',
   standalone: true,
@@ -21,7 +20,7 @@ export class SlideOverComponent {
     private slideOverService: SlideOverService,
     private renderer: Renderer2,
     private apiService: ApiService,
-    private taskService: TaskService,
+    private taskService: TaskService
   ) {
     this.isOpen$.subscribe((isOpen) => {
       if (this.panel === undefined) return;
@@ -88,9 +87,9 @@ export class SlideOverComponent {
 
   clearInputFields(): void {
     this.descriptionInput.nativeElement.value = null;
-    this.creationDateDay.nativeElement.value = this.currentDate.day
-    this.creationDateMonth.nativeElement.value = this.currentDate.month
-    this.creationDateYear.nativeElement.value = this.currentDate.year
+    this.creationDateDay.nativeElement.value = this.currentDate.day;
+    this.creationDateMonth.nativeElement.value = this.currentDate.month;
+    this.creationDateYear.nativeElement.value = this.currentDate.year;
     this.completionDateYear.nativeElement.value = null;
     this.completionDateMonth.nativeElement.value = null;
     this.completionDateDay.nativeElement.value = null;
@@ -118,7 +117,18 @@ export class SlideOverComponent {
       this.task.priority = data.priority;
 
       this.transformCreationDate(this.task.creationDate);
-      this.transformCompletionDate(this.task.completionDate);
+
+      if (this.task.completionDate !== ('' as any)) {
+        this.transformCompletionDate(this.task.completionDate);
+        console.log(this.task.completionDate + ' wurde transformiert');
+      }
+      if (data.completionDate === ('1970-01-01T00:00:00.000Z' as any)) {
+        console.log('hat dann wohl nicht so funktioniert, wa?');
+
+        (this.completionDateYear.nativeElement.value = ' '),
+          (this.completionDateMonth.nativeElement.value = ' '),
+          (this.completionDateDay.nativeElement.value = ' ');
+      }
 
       this.descriptionInput.nativeElement.value = this.task.description;
       if (this.task.completed === true) {
@@ -241,7 +251,7 @@ export class SlideOverComponent {
       }
     );
     this.taskService.fetchTasks();
-    this.clearInputFields()
+    this.clearInputFields();
   }
 
   createDateFromValues(
@@ -305,17 +315,15 @@ export class SlideOverComponent {
       }
     );
     this.taskService.fetchTasks();
-    this.clearInputFields()
+    this.clearInputFields();
   }
   deleteTask(id: any) {
     this.taskService.deleteTask(id);
   }
 
-
-  currentDate ={
+  currentDate = {
     year: new Date().getFullYear().toString(),
-    month: (new Date().getMonth() + 1).toString().padStart(2, '0') ,
-    day: new Date().getDate().toString().padStart(2, '0')   
-  }
-
+    month: (new Date().getMonth() + 1).toString().padStart(2, '0'),
+    day: new Date().getDate().toString().padStart(2, '0'),
+  };
 }
