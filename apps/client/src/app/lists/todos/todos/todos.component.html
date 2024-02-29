@@ -43,7 +43,10 @@
           <time>{{ task.creationDate | date }}</time>
         </p>
         <svg
-          *ngIf="(task.completionDate | date) !== (comparisonDate | date)"
+          *ngIf="
+            task.completionDate &&
+            (task.completionDate | date) !== (comparisonDate | date)
+          "
           viewBox="0 0 2 2"
           class="h-0.5 w-0.5 fill-current"
         >
@@ -51,7 +54,10 @@
         </svg>
         <p
           class="whitespace-nowrap"
-          *ngIf="(task.completionDate | date) !== (comparisonDate | date)"
+          *ngIf="
+            task.completionDate &&
+            (task.completionDate | date) !== (comparisonDate | date)
+          "
         >
           Completion Date:
           <time>{{ task.completionDate | date }}</time>

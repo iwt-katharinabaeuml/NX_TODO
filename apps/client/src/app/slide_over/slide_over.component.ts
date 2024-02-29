@@ -118,7 +118,7 @@ export class SlideOverComponent {
 
       this.transformCreationDate(this.task.creationDate);
 
-      if (this.task.completionDate !== ('' as any)) {
+      if (this.task.completionDate !== undefined) {
         this.transformCompletionDate(this.task.completionDate);
         console.log(this.task.completionDate + ' wurde transformiert');
       }
@@ -224,8 +224,11 @@ export class SlideOverComponent {
 
     completed = this.active;
 
+
+
     const updatedTaskBody: UpdateTaskDto = {
       description: this.descriptionInput.nativeElement.value,
+     
       creationDate: this.createDateFromValues(
         this.creationDateYear.nativeElement.value,
         this.creationDateMonth.nativeElement.value,
@@ -253,31 +256,21 @@ export class SlideOverComponent {
     this.taskService.fetchTasks();
     this.clearInputFields();
   }
-
-  createDateFromValues(
-    year: number,
-    month: number,
-    day: number
-  ): string | null {
+  createDateFromValues(year: number, month: number, day: number): string | null {
     if (isNaN(year) || isNaN(month) || isNaN(day)) {
-      return null;
+        return null;
     }
 
-    const dateString = `${year}-${month.toString().padStart(2, '0')}-${day
-      .toString()
-      .padStart(2, '0')}`;
-
+    const dateString = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
     const date = new Date(dateString);
+
     if (isNaN(date.getTime())) {
-      return null;
+        return null;
     }
 
-    const isoString = `${date.toISOString().slice(0, 19)}.${date
-      .getUTCMilliseconds()
-      .toString()
-      .padStart(3, '0')}Z`;
+    const isoString = `${date.toISOString().slice(0, 19)}.${date.getUTCMilliseconds().toString().padStart(3, '0')}Z`;
     return isoString;
-  }
+}
 
   createNewTask() {
     console.log('in der createNewTask() Funktion');
