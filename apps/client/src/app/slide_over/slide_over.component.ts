@@ -120,11 +120,8 @@ export class SlideOverComponent {
 
       if (this.task.completionDate !== undefined) {
         this.transformCompletionDate(this.task.completionDate);
-        console.log(this.task.completionDate + ' wurde transformiert');
       }
       if (data.completionDate === ('1970-01-01T00:00:00.000Z' as any)) {
-        console.log('hat dann wohl nicht so funktioniert, wa?');
-
         (this.completionDateYear.nativeElement.value = ' '),
           (this.completionDateMonth.nativeElement.value = ' '),
           (this.completionDateDay.nativeElement.value = ' ');
@@ -224,11 +221,9 @@ export class SlideOverComponent {
 
     completed = this.active;
 
-
-
     const updatedTaskBody: UpdateTaskDto = {
       description: this.descriptionInput.nativeElement.value,
-     
+
       creationDate: this.createDateFromValues(
         this.creationDateYear.nativeElement.value,
         this.creationDateMonth.nativeElement.value,
@@ -243,8 +238,6 @@ export class SlideOverComponent {
       completed: completed,
     };
 
-    console.log('das ist der neue aktualisierte Task', updatedTaskBody);
-
     this.apiService.updateDateById(this.taskId, updatedTaskBody).subscribe(
       (response) => {
         console.log('Task erfolgreich aktualisiert', response);
@@ -256,24 +249,32 @@ export class SlideOverComponent {
     this.taskService.fetchTasks();
     this.clearInputFields();
   }
-  createDateFromValues(year: number, month: number, day: number): string | null {
+  createDateFromValues(
+    year: number,
+    month: number,
+    day: number
+  ): string | null {
     if (isNaN(year) || isNaN(month) || isNaN(day)) {
-        return null;
+      return null;
     }
 
-    const dateString = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    const dateString = `${year}-${month.toString().padStart(2, '0')}-${day
+      .toString()
+      .padStart(2, '0')}`;
     const date = new Date(dateString);
 
     if (isNaN(date.getTime())) {
-        return null;
+      return null;
     }
 
-    const isoString = `${date.toISOString().slice(0, 19)}.${date.getUTCMilliseconds().toString().padStart(3, '0')}Z`;
+    const isoString = `${date.toISOString().slice(0, 19)}.${date
+      .getUTCMilliseconds()
+      .toString()
+      .padStart(3, '0')}Z`;
     return isoString;
-}
+  }
 
   createNewTask() {
-    console.log('in der createNewTask() Funktion');
     let priority = Priority.none;
     let completed = false;
 
