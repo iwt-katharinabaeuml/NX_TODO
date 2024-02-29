@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ApiService } from './api.service';
-import { TodosService } from '../lists/todos/todos/todos.component.service';
+
 import { Task } from '../lists/shared/task.model';
 import { TaskListDto } from './api-interfaces';
 
@@ -14,7 +14,7 @@ export class TaskService {
   >(null);
   taskId$: Observable<number | null> = this.taskIdSubject.asObservable();
 
-  constructor(private apiService: ApiService, private tdService: TodosService) {
+  constructor(private apiService: ApiService,) {
     this.fetchTasks();
   }
 

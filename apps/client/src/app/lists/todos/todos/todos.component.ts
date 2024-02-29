@@ -2,14 +2,13 @@ import {
   Component,
   ElementRef,
   OnInit,
-  Output,
   QueryList,
   Renderer2,
   ViewChildren,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Task } from '../../shared/task.model';
-import { TodosService } from './todos.component.service';
+
 import { SlideOverService } from '../../../services/slide_over.service';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
@@ -46,6 +45,7 @@ export class TodosComponent implements OnInit {
     this.tasks = this.taskService.getTasks();
     this.taskService.tasksChanged.subscribe((tasks: Task[]) => {
       this.tasks = tasks;
+      console.log(tasks)
     });
 
     this.apiService.getData().subscribe(
@@ -114,9 +114,5 @@ export class TodosComponent implements OnInit {
   setHeaderFields(header: string, description: string, button: string): void {
     this.slideOverService.setSliderHeader(header, description, button);
   }
-
-
-
-
-  createNewTask() {}
+  comparisonDate: Date = new Date('1970/01/01')
 }
