@@ -25,7 +25,7 @@ export class ApiService {
     return this.http.delete<any>(this.apiUrl + '/' + id);
   }
 
-  updateDateById(id:any, task:UpdateTaskDto){
+  updateDateById(id:any, task:UpdateTaskDto){ // TODO correct Typo: updateDataById
     console.log(id)
     console.log(task)
     this.http.put<any>(this.apiUrl + '/' + id, task);
@@ -36,4 +36,12 @@ export class ApiService {
   createTask(task:CreateTaskDto){
     return this.http.post<any>(this.apiUrl, task);
   }
+patchDataById(id:any, task:UpdateTaskDto){ 
+  console.log(id)
+  console.log(task)
+  this.http.patch<any>(this.apiUrl + '/' + id, task);
+  console.log('im API Server PATCH' + (this.apiUrl + '/' + id, task))
+  return this.http.patch<any>(this.apiUrl + '/' + id, task);
+}
+
 }

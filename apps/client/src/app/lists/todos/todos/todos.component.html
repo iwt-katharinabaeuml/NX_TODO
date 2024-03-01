@@ -21,7 +21,13 @@
   >
     <div class="min-w-0">
       <div class="flex items-start gap-x-3">
-        <p class="text-sm font-semibold leading-6 text-gray-900">
+        <p
+          class="text-sm font-semibold leading-6 text-gray-900"
+          [ngClass]="{
+          'line-through': task.completed === true,
+      
+        }"
+        >
           {{ task.description }}
         </p>
         <p

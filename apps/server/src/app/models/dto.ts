@@ -54,7 +54,6 @@ export class UpdateTaskDto {
 
   @ApiProperty()
   @IsDateString()
-  @MinDate(new Date())
   creationDate: Date;
 
   @ApiProperty()

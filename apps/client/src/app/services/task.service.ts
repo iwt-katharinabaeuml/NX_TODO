@@ -49,6 +49,5 @@ export class TaskService {
           console.error(error);
         }
       );
-
   }
 }

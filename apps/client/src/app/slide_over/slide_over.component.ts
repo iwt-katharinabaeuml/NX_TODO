@@ -206,11 +206,10 @@ export class SlideOverComponent {
     priority: Priority.none,
     completed: false,
   };
-
   updateTask() {
     let priority = Priority.none;
     let completed = false;
-
+  
     if (this.highPriorityRadioButton.nativeElement.checked) {
       priority = Priority.high;
     } else if (this.mediumPriorityRadioButton.nativeElement.checked) {
@@ -218,12 +217,20 @@ export class SlideOverComponent {
     } else if (this.lowPriorityRadioButton.nativeElement.checked) {
       priority = Priority.low;
     }
-
-    completed = this.active;
-
-    const updatedTaskBody: UpdateTaskDto = {
+  
+    // Überprüfen, ob completionDate existiert
+    if (
+      this.completionDateYear.nativeElement.value !== '' ||
+      this.completionDateMonth.nativeElement.value !== '' ||
+      this.completionDateDay.nativeElement.value !== ''
+    ) {
+      completed = true; // Wenn completionDate vorhanden ist, setze completed auf true
+    } else {
+      completed = this.active; // Andernfalls verwende den aktuellen Wert von "active"
+    }
+  
+    let updatedTaskBody: UpdateTaskDto = {
       description: this.descriptionInput.nativeElement.value,
-
       creationDate: this.createDateFromValues(
         this.creationDateYear.nativeElement.value,
         this.creationDateMonth.nativeElement.value,
@@ -235,9 +242,11 @@ export class SlideOverComponent {
         this.completionDateDay.nativeElement.value
       ) as any,
       priority: priority,
-      completed: completed,
-    };
-
+      completed: completed, // Setze completed entsprechend der Überprüfung oben
+    }; 
+  
+    console.log('das ist der Year Value' + this.completionDateYear.nativeElement.value )
+    console.log('das ist der zu updatende Body 1' + updatedTaskBody)
     this.apiService.updateDateById(this.taskId, updatedTaskBody).subscribe(
       (response) => {
         console.log('Task erfolgreich aktualisiert', response);
@@ -246,9 +255,11 @@ export class SlideOverComponent {
         console.error('Fehler beim Aktualisieren des Tasks', error);
       }
     );
+    console.log('das ist der zu updatende Body 2' + updatedTaskBody.completionDate)
     this.taskService.fetchTasks();
     this.clearInputFields();
   }
+  
   createDateFromValues(
     year: number,
     month: number,
