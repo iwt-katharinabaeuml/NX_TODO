@@ -11,7 +11,7 @@
         </p>
         <p
           *ngIf="task.priority !== 'none'"
-          class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-gray-600 bg-gray-50 ring-gray-500/10"
+          class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-gray-600 bg-gray-50 ring-gray-500/10 line-through"
           [ngClass]="{
             'text-red-600': task.priority === 'high',
             'text-orange-400': task.priority === 'medium',

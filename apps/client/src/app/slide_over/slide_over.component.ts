@@ -122,9 +122,9 @@ export class SlideOverComponent {
         this.transformCompletionDate(this.task.completionDate);
       }
       if (data.completionDate === ('1970-01-01T00:00:00.000Z' as any)) {
-        (this.completionDateYear.nativeElement.value = ' '),
-          (this.completionDateMonth.nativeElement.value = ' '),
-          (this.completionDateDay.nativeElement.value = ' ');
+        (this.completionDateYear.nativeElement.value = ''),
+          (this.completionDateMonth.nativeElement.value = ''),
+          (this.completionDateDay.nativeElement.value = '');
       }
 
       this.descriptionInput.nativeElement.value = this.task.description;
