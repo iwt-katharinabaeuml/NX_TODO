@@ -4,6 +4,7 @@ import { SlideOverService } from '../services/slide_over.service';
 import { ApiService } from '../services/api.service';
 import { Priority, TaskDto, UpdateTaskDto } from '../services/api-interfaces';
 import { TaskService } from '../services/task.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'fse-slide-over',
@@ -48,9 +49,19 @@ export class SlideOverComponent {
     });
   }
 
+  private isOpenSubjectAltert = new BehaviorSubject<boolean>(false);
+  alertIsShown$ = this.isOpenSubjectAltert.asObservable();
+
+  showAlert(isShown: boolean) {
+    const newValue = isShown;
+    this.isOpenSubjectAltert.next(newValue);
+  }
+
   isOpen$ = this.slideOverService.isOpen$;
 
   showAllOptions$ = this.slideOverService.showAllOptions$;
+
+  alertInfo = '';
 
   toggleSlideOver(): void {
     this.slideOverService.toggle();
@@ -61,6 +72,8 @@ export class SlideOverComponent {
   changeStatus(): void {
     this.active = !this.active;
   }
+  @ViewChild('alertBox', { static: true })
+  alertBox!: ElementRef;
 
   @ViewChild('descriptionInput', { static: true })
   descriptionInput!: ElementRef;
@@ -218,18 +231,15 @@ export class SlideOverComponent {
       priority = Priority.low;
     }
 
-    const completionYear = this.completionDateYear.nativeElement.value;
-    const completionMonth = this.completionDateMonth.nativeElement.value;
-    const completionDay = this.completionDateDay.nativeElement.value;
-
+    // Überprüfen, ob completionDate existiert
     if (
-      completionYear === '' &&
-      completionMonth === '' &&
-      completionDay === ''
+      this.completionDateYear.nativeElement.value !== '' ||
+      this.completionDateMonth.nativeElement.value !== '' ||
+      this.completionDateDay.nativeElement.value !== ''
     ) {
-      completed = false;
+      completed = true; // Wenn completionDate vorhanden ist, setze completed auf true
     } else {
-      completed = true;
+      completed = this.active; // Andernfalls verwende den aktuellen Wert von "active"
     }
 
     let updatedTaskBody: UpdateTaskDto = {
@@ -240,28 +250,35 @@ export class SlideOverComponent {
         this.creationDateDay.nativeElement.value
       ) as any,
       completionDate: this.createDateFromValues(
-        completionYear,
-        completionMonth,
-        completionDay
+        this.completionDateYear.nativeElement.value,
+        this.completionDateMonth.nativeElement.value,
+        this.completionDateDay.nativeElement.value
       ) as any,
       priority: priority,
-      completed: completed, // Setze completed entsprechend der Überprüfung oben
+      completed: completed,
     };
 
-    console.log('das ist der Year Value' + completionYear);
-    console.log('das ist der zu updatende Body 1' + updatedTaskBody);
+    if (updatedTaskBody.description.length <= 1) {
+      this.alertInfo = 'Please add a description';
+      this.showAlert(true);
+    } else {
+      this.showAlert(false);
+      //this.alertBox.nativeElement.addClass='hidden'
+      console.log(
+        'der Alters sollte nicht gezeigt werden: ' + this.alertIsShown$
+      );
+    }
+
     this.apiService.updateDateById(this.taskId, updatedTaskBody).subscribe(
       (response) => {
-        console.log('Task erfolgreich aktualisiert', response);
+        this.taskService.fetchTasks();
+        this.toggleSlideOver();
       },
       (error) => {
         console.error('Fehler beim Aktualisieren des Tasks', error);
       }
     );
-    console.log(
-      'das ist der zu updatende Body 2' + updatedTaskBody.completionDate
-    );
-    this.taskService.fetchTasks();
+
     this.clearInputFields();
   }
 
