@@ -33,11 +33,17 @@ export class TodosComponent implements OnInit {
     private taskService: TaskService
   ) {}
 
+  taskId: any;
+
   ngOnInit(): void {
     this.loadTasks();
 
     this.slideOverService.isOpen$.subscribe((isOpen$) => {
       this.isOpen = isOpen$;
+    });
+
+    this.taskService.taskId$.subscribe((taskId) => {
+      this.taskId = taskId;
     });
   }
 
@@ -45,7 +51,7 @@ export class TodosComponent implements OnInit {
     this.tasks = this.taskService.getTasks();
     this.taskService.tasksChanged.subscribe((tasks: Task[]) => {
       this.tasks = tasks;
-      console.log(tasks)
+      console.log(tasks);
     });
 
     this.apiService.getData().subscribe(
@@ -75,6 +81,7 @@ export class TodosComponent implements OnInit {
 
   isDotMenus: boolean[] = [];
   @ViewChildren('dotMenu') dotMenus!: QueryList<ElementRef<any>>;
+  @ViewChildren('fastCompleteButton') fastCompleteButton!: QueryList<ElementRef<any>>;
 
   toggleDotMenu(index: number) {
     this.isDotMenus[index] = !this.isDotMenus[index];
@@ -114,5 +121,14 @@ export class TodosComponent implements OnInit {
   setHeaderFields(header: string, description: string, button: string): void {
     this.slideOverService.setSliderHeader(header, description, button);
   }
-  comparisonDate: Date = new Date('1970/01/01')
+  comparisonDate: Date = new Date('1970/01/01');
+
+  fastCompleteTask(id: any) {
+    console.log('fastCompleteTask')
+    this.taskService.fastCompleteTask(id);
+  }
+
+  fastUncompleteTask(id: any){
+    this.taskService.fastUncompleteTask(id)
+  }
 }

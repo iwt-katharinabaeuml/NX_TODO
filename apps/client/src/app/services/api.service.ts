@@ -17,6 +17,7 @@ export class ApiService {
 
   getDataById(id: any) {
     return this.http.get<any>(this.apiUrl + '/' + id);
+    
   }
 
   deleteDataById(id: any) {
@@ -36,12 +37,6 @@ export class ApiService {
   createTask(task:CreateTaskDto){
     return this.http.post<any>(this.apiUrl, task);
   }
-patchDataById(id:any, task:UpdateTaskDto){ 
-  console.log(id)
-  console.log(task)
-  this.http.patch<any>(this.apiUrl + '/' + id, task);
-  console.log('im API Server PATCH' + (this.apiUrl + '/' + id, task))
-  return this.http.patch<any>(this.apiUrl + '/' + id, task);
-}
+
 
 }
