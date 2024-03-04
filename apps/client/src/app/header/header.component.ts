@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TodosComponent } from '../lists/todos/todos/todos.component';
-import { DonesComponent } from '../lists/dones/dones.component';
+
 
 import { MenuSlideService } from '../services/slide_over.service';
 import { MenuIconComponent } from '../shared/menu.component';
@@ -9,7 +9,7 @@ import { MenuIconComponent } from '../shared/menu.component';
 @Component({
   selector: 'fse-header',
   standalone: true,
-  imports: [CommonModule, TodosComponent, DonesComponent, MenuIconComponent],
+  imports: [CommonModule, TodosComponent, MenuIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   providers: [MenuSlideService],

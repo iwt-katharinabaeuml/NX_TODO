@@ -263,7 +263,6 @@ export class SlideOverComponent {
       this.showAlert(true);
     } else {
       this.showAlert(false);
-      //this.alertBox.nativeElement.addClass='hidden'
       console.log(
         'der Alters sollte nicht gezeigt werden: ' + this.alertIsShown$
       );
