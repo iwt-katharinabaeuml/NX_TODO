@@ -137,7 +137,7 @@ export class SlideOverComponent {
       if (this.task.completionDate !== undefined) {
         this.transformCompletionDate(this.task.completionDate);
       }
-      if (data.completionDate === ('1970-01-01T00:00:00.000Z' as any)) {
+      if (data.completionDate === ('1970-01-01T00:00:00.000Z' as any) && this.completionDateYear && this.completionDateMonth && this.completionDateDay) {
         (this.completionDateYear.nativeElement.value = ''),
           (this.completionDateMonth.nativeElement.value = ''),
           (this.completionDateDay.nativeElement.value = '');
@@ -207,15 +207,19 @@ export class SlideOverComponent {
     let DD = date.getDate();
 
     if (isNaN(YYYY) || isNaN(MM) || isNaN(DD)) {
-      this.completionDateYear.nativeElement.value = '';
-      this.completionDateMonth.nativeElement.value = '';
-      this.completionDateDay.nativeElement.value = '';
+        if (this.completionDateYear && this.completionDateMonth && this.completionDateDay) {
+            this.completionDateYear.nativeElement.value = '';
+            this.completionDateMonth.nativeElement.value = '';
+            this.completionDateDay.nativeElement.value = '';
+        }
     } else {
-      this.completionDateYear.nativeElement.value = YYYY;
-      this.completionDateMonth.nativeElement.value = MM;
-      this.completionDateDay.nativeElement.value = DD;
+        if (this.completionDateYear && this.completionDateMonth && this.completionDateDay) {
+            this.completionDateYear.nativeElement.value = YYYY;
+            this.completionDateMonth.nativeElement.value = MM;
+            this.completionDateDay.nativeElement.value = DD;
+        }
     }
-  }
+}
 
   slideFields$ = this.slideOverService.slideFields$;
 
