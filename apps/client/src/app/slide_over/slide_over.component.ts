@@ -66,6 +66,7 @@ export class SlideOverComponent {
   toggleSlideOver(): void {
     this.taskService.fetchTasks();
     this.slideOverService.toggle();
+    this.showAlert(false);
   }
   active: boolean = false;
 
@@ -107,6 +108,7 @@ export class SlideOverComponent {
     this.completionDateYear.nativeElement.value = null;
     this.completionDateMonth.nativeElement.value = null;
     this.completionDateDay.nativeElement.value = null;
+  
   }
 
   completionDay: number = 0;
@@ -268,9 +270,7 @@ export class SlideOverComponent {
       this.showAlert(true);
     } else {
       this.showAlert(false);
-      console.log(
-        'der Alters sollte nicht gezeigt werden: ' + this.alertIsShown$
-      );
+    
     }
 
     this.apiService.updateDateById(this.taskId, updatedTaskBody).subscribe(
@@ -340,8 +340,14 @@ export class SlideOverComponent {
     this.apiService.createTask(newTaskBody).subscribe(
       (response) => {
         console.log('Task erfolgreich erstellt', response);
+        this.slideOverService.toggle()
+        this.showAlert(false);
       },
       (error) => {
+        if (newTaskBody.description.length <= 1){
+          this.alertInfo = 'Please add a description';
+          this.showAlert(true);
+        }
         console.error('Fehler beim Erstellen des Tasks', error);
       }
     );
