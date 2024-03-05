@@ -64,14 +64,15 @@ export class SlideOverComponent {
   alertInfo = '';
 
   toggleSlideOver(): void {
-    this.slideOverService.toggle();
     this.taskService.fetchTasks();
+    this.slideOverService.toggle();
   }
   active: boolean = false;
 
   changeStatus(): void {
     this.active = !this.active;
   }
+
   @ViewChild('alertBox', { static: true })
   alertBox!: ElementRef;
 
@@ -139,7 +140,11 @@ export class SlideOverComponent {
           (this.completionDateMonth.nativeElement.value = ''),
           (this.completionDateDay.nativeElement.value = '');
       }
-
+      if (!data.completionDate ) {
+        (this.completionDateYear.nativeElement.value = ''),
+          (this.completionDateMonth.nativeElement.value = ''),
+          (this.completionDateDay.nativeElement.value = '');
+      }
       this.descriptionInput.nativeElement.value = this.task.description;
       if (this.task.completed === true) {
         this.active = true;

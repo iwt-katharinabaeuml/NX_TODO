@@ -84,12 +84,11 @@ export class TaskService {
         if (!body) {
           throw new Error('Data not found');
         }
-        const uncompletedTask: UpdateTaskDto = {
+        const uncompletedTask: any = {
           description: body.description,
           creationDate: body.creationDate,
-          completionDate: new Date(), // Setze das completionDate auf den 1. Januar 1970
           priority: body.priority as Priority,
-          completed: false // Setze completed auf false
+          completed: false 
         };
         return this.apiService.updateDateById(id, uncompletedTask);
       })
