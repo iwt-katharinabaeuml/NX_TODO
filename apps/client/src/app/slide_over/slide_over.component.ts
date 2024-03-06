@@ -108,7 +108,6 @@ export class SlideOverComponent {
     this.completionDateYear.nativeElement.value = null;
     this.completionDateMonth.nativeElement.value = null;
     this.completionDateDay.nativeElement.value = null;
-  
   }
 
   completionDay: number = 0;
@@ -137,12 +136,18 @@ export class SlideOverComponent {
       if (this.task.completionDate !== undefined) {
         this.transformCompletionDate(this.task.completionDate);
       }
-      if (data.completionDate === ('1970-01-01T00:00:00.000Z' as any) && this.completionDateYear && this.completionDateMonth && this.completionDateDay) {
+      if (
+        data.completionDate === ('1970-01-01T00:00:00.000Z' as any) &&
+        this.completionDateYear &&
+        this.completionDateMonth &&
+        this.completionDateDay
+      ) {
         (this.completionDateYear.nativeElement.value = ''),
           (this.completionDateMonth.nativeElement.value = ''),
           (this.completionDateDay.nativeElement.value = '');
       }
-      if (!data.completionDate ) {
+      if (!data.completionDate) {
+        // Sinn?
         (this.completionDateYear.nativeElement.value = ''),
           (this.completionDateMonth.nativeElement.value = ''),
           (this.completionDateDay.nativeElement.value = '');
@@ -207,19 +212,27 @@ export class SlideOverComponent {
     let DD = date.getDate();
 
     if (isNaN(YYYY) || isNaN(MM) || isNaN(DD)) {
-        if (this.completionDateYear && this.completionDateMonth && this.completionDateDay) {
-            this.completionDateYear.nativeElement.value = '';
-            this.completionDateMonth.nativeElement.value = '';
-            this.completionDateDay.nativeElement.value = '';
-        }
+      if (
+        this.completionDateYear &&
+        this.completionDateMonth &&
+        this.completionDateDay
+      ) {
+        this.completionDateYear.nativeElement.value = '';
+        this.completionDateMonth.nativeElement.value = '';
+        this.completionDateDay.nativeElement.value = '';
+      }
     } else {
-        if (this.completionDateYear && this.completionDateMonth && this.completionDateDay) {
-            this.completionDateYear.nativeElement.value = YYYY;
-            this.completionDateMonth.nativeElement.value = MM;
-            this.completionDateDay.nativeElement.value = DD;
-        }
+      if (
+        this.completionDateYear &&
+        this.completionDateMonth &&
+        this.completionDateDay
+      ) {
+        this.completionDateYear.nativeElement.value = YYYY;
+        this.completionDateMonth.nativeElement.value = MM;
+        this.completionDateDay.nativeElement.value = DD;
+      }
     }
-}
+  }
 
   slideFields$ = this.slideOverService.slideFields$;
 
@@ -241,16 +254,22 @@ export class SlideOverComponent {
     } else if (this.lowPriorityRadioButton.nativeElement.checked) {
       priority = Priority.low;
     }
-
-    // Überprüfen, ob completionDate existiert
     if (
       this.completionDateYear.nativeElement.value !== '' ||
       this.completionDateMonth.nativeElement.value !== '' ||
       this.completionDateDay.nativeElement.value !== ''
     ) {
-      completed = true; // Wenn completionDate vorhanden ist, setze completed auf true
+      completed = true;
     } else {
-      completed = this.active; // Andernfalls verwende den aktuellen Wert von "active"
+      completed = this.active;
+    }
+    if (
+      !this.completionDateYear.nativeElement.value ||
+      !this.completionDateMonth.nativeElement.value ||
+      !this.completionDateDay.nativeElement.value
+    ) {
+      completed = false;
+      this.active = false;
     }
 
     let updatedTaskBody: UpdateTaskDto = {
@@ -274,7 +293,6 @@ export class SlideOverComponent {
       this.showAlert(true);
     } else {
       this.showAlert(false);
-    
     }
 
     this.apiService.updateDateById(this.taskId, updatedTaskBody).subscribe(
@@ -344,11 +362,11 @@ export class SlideOverComponent {
     this.apiService.createTask(newTaskBody).subscribe(
       (response) => {
         console.log('Task erfolgreich erstellt', response);
-        this.slideOverService.toggle()
+        this.slideOverService.toggle();
         this.showAlert(false);
       },
       (error) => {
-        if (newTaskBody.description.length <= 1){
+        if (newTaskBody.description.length <= 1) {
           this.alertInfo = 'Please add a description';
           this.showAlert(true);
         }
@@ -367,4 +385,27 @@ export class SlideOverComponent {
     month: (new Date().getMonth() + 1).toString().padStart(2, '0'),
     day: new Date().getDate().toString().padStart(2, '0'),
   };
-}
+  fieldBlur() {
+   
+      const yearValue = this.completionDateYear.nativeElement.value;
+      const monthValue = this.completionDateMonth.nativeElement.value;
+      const dayValue = this.completionDateDay.nativeElement.value;
+
+      const isYearValid = /^\d{4}$/.test(yearValue);
+      console.log(isYearValid, yearValue);
+      const isMonthValid =
+        /^\d{1,2}$/.test(monthValue) && +monthValue >= 1 && +monthValue <= 12;
+      console.log(isMonthValid, monthValue);
+      const isDayValid =
+        /^\d{1,2}$/.test(dayValue) && +dayValue >= 1 && +dayValue <= 31;
+      console.log(isDayValid, dayValue);
+
+      if (isYearValid && isMonthValid && isDayValid) {
+        this.active = true;
+        console.log(yearValue, monthValue, dayValue);
+      } else {
+        console.log(yearValue, monthValue, dayValue);
+        console.log('Ungültige Eingabe');
+      }
+    }; 
+  }
