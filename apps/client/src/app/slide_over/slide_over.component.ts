@@ -68,11 +68,7 @@ export class SlideOverComponent {
     this.slideOverService.toggle();
     this.showAlert(false);
   }
-  active: boolean = false;
 
-  changeStatus(): void {
-    this.active = !this.active;
-  }
 
   @ViewChild('alertBox', { static: true })
   alertBox!: ElementRef;
@@ -100,6 +96,25 @@ export class SlideOverComponent {
   @ViewChild('lowPriorityRadioButton')
   lowPriorityRadioButton!: ElementRef<HTMLInputElement>;
 
+
+
+  active: boolean = false;
+
+  changeStatus(): void {
+    this.active = !this.active;
+    if (this.active === true) {
+       this.completionDateDay.nativeElement.value = this.currentDate.day;
+       this.completionDateMonth.nativeElement.value = this.currentDate.month;
+       this.completionDateYear.nativeElement.value = this.currentDate.year;
+    }
+    else{
+      this.completionDateDay.nativeElement.value = ''
+       this.completionDateMonth.nativeElement.value = ''
+       this.completionDateYear.nativeElement.value = ''
+    }
+
+ 
+  }
   clearInputFields(): void {
     this.descriptionInput.nativeElement.value = null;
     this.creationDateDay.nativeElement.value = this.currentDate.day;
@@ -193,6 +208,12 @@ export class SlideOverComponent {
       this.taskId = taskId;
       this.setInputFields(this.taskId);
     });
+    if (this.active=true){
+      this.completionDateDay.nativeElement.value= this.currentDate.day;
+      this.completionDateMonth.nativeElement.value= this.currentDate.month;
+      this.completionDateYear.nativeElement.value= this.currentDate.year;
+  
+     }
   }
 
   transformCreationDate(dateString: any) {
@@ -386,7 +407,7 @@ export class SlideOverComponent {
     day: new Date().getDate().toString().padStart(2, '0'),
   };
   fieldBlur() {
-   
+    if (this.active === false) {
       const yearValue = this.completionDateYear.nativeElement.value;
       const monthValue = this.completionDateMonth.nativeElement.value;
       const dayValue = this.completionDateDay.nativeElement.value;
@@ -406,6 +427,18 @@ export class SlideOverComponent {
       } else {
         console.log(yearValue, monthValue, dayValue);
         console.log('Ungültige Eingabe');
+        // vielleicht noch falls falsch/richtig Border-Color setzen
       }
-    }; 
+    } else {
+      this.active = false;
+    }
   }
+
+  clearCompletionDate() {
+    if ((this.active = false)) {
+      this.completionDateYear.nativeElement.value = '';
+      this.completionDateMonth.nativeElement.value = '';
+      this.completionDateDay.nativeElement.value = '';
+    }
+  }
+}
