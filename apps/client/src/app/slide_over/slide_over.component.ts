@@ -427,7 +427,6 @@ export class SlideOverComponent {
       } else {
         console.log(yearValue, monthValue, dayValue);
         console.log('Ungültige Eingabe');
-        // vielleicht noch falls falsch/richtig Border-Color setzen
       }
     } else {
       this.active = false;
