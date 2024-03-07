@@ -1,16 +1,16 @@
 // import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { HeaderComponent } from './header.component';
+// import { SlideOverComponent } from './slide_over.component';
 
-// describe('HeaderComponent', () => {
-//   let component: HeaderComponent;
-//   let fixture: ComponentFixture<HeaderComponent>;
+// describe('SlideOverComponent', () => {
+//   let component: SlideOverComponent;
+//   let fixture: ComponentFixture<SlideOverComponent>;
 
 //   beforeEach(async () => {
 //     await TestBed.configureTestingModule({
-//       imports: [HeaderComponent],
+//       imports: [SlideOverComponent],
 //     }).compileComponents();
 
-//     fixture = TestBed.createComponent(HeaderComponent);
+//     fixture = TestBed.createComponent(SlideOverComponent);
 //     component = fixture.componentInstance;
 //     fixture.detectChanges();
 //   });
