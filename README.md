@@ -8,10 +8,8 @@
 
 To start the development server run `nx serve server`. Open your browser and navigate to http://localhost:4200/. Happy coding!
 
-<<<<<<< HEAD
-=======
  `nx run-many -t serve -p client server`
->>>>>>> 806ed4120fa9f24e95772302ebe2abb52ad279c3
+
 ## Generate code
 
 If you happen to use Nx plugins, you can leverage code generators that might come with it.
